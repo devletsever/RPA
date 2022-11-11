@@ -1,0 +1,1568 @@
+﻿<process name="MailProcess" version="1.0" bpversion="7.1.1.65484" narrative="" byrefcollection="true" preferredid="951c1658-8b49-48b6-8659-b5f4c33d9f14">
+  <view>
+    <camerax>0</camerax>
+    <cameray>-171</cameray>
+    <zoom version="2">1.25</zoom>
+  </view>
+  <preconditions />
+  <endpoint narrative="" />
+  <subsheet subsheetid="6dc938cc-ff33-48b1-9161-7ba131bfde82" type="Normal" published="False">
+    <name>Google Search</name>
+    <view>
+      <camerax>-282</camerax>
+      <cameray>247</cameray>
+      <zoom version="2">1.25</zoom>
+    </view>
+  </subsheet>
+  <subsheet subsheetid="eaa7adb3-7947-4b3c-906a-d1c3791a3ba5" type="Normal" published="False">
+    <name>Yandex Search</name>
+    <view>
+      <camerax>3</camerax>
+      <cameray>330</cameray>
+      <zoom version="2">1.25</zoom>
+    </view>
+  </subsheet>
+  <subsheet subsheetid="f35ab599-336e-4dcf-ba2d-c83a0f980c22" type="Normal" published="False">
+    <name>Bing Search</name>
+    <view>
+      <camerax>-108</camerax>
+      <cameray>-350</cameray>
+      <zoom version="2">1.25</zoom>
+    </view>
+  </subsheet>
+  <stage stageid="6f6b1793-1582-4257-8d32-22e7a6a3208f" name="End" type="End">
+    <display x="-240" y="135" />
+  </stage>
+  <stage stageid="66390a97-8b87-4ba0-ae3c-9c7e7af08162" name="Stage1" type="ProcessInfo">
+    <display x="-615" y="-285" w="150" h="90" />
+  </stage>
+  <stage stageid="5dc431f1-8260-4f74-8191-d4a19ed5bad3" name="Start" type="Start">
+    <display x="-240" y="-330" />
+    <onsuccess>d1520640-0c18-49cc-ba3c-4e5c6e212466</onsuccess>
+  </stage>
+  <stage stageid="d1520640-0c18-49cc-ba3c-4e5c6e212466" name="MS Outlook Email VBO::Get Received Items (Basic)" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-240" y="-270" w="120" h="30" />
+    <inputs>
+      <input type="text" name="Sender Name" friendlyname="Sender Name" narrative="Optional. The From display name, which might be a name (eg John Smith) or email address (eg admin@client.com). Asterisk wildcard permitted, eg *John Smith* for any mail where the text 'John Smith' appears in the From field." expr="" />
+      <input type="text" name="Sender Email" friendlyname="Sender Email" narrative="Optional. The sender email address." expr="" />
+      <input type="datetime" name="Received Earliest" friendlyname="Received Earliest" narrative="Optional. The earliest date to search from." expr="" />
+      <input type="datetime" name="Received Latest" friendlyname="Received Latest" narrative="Optional. The latest date to search to." expr="" />
+      <input type="text" name="Subject" friendlyname="Subject" narrative="Optional. Asterisk wildcard permitted, eg *Project Update for 'Project Update', 'RE: Project Update' etc." expr="" />
+      <input type="text" name="Message" friendlyname="Message" narrative="Optional. Asterisk wildcard permitted, eg *Blue Prism*" expr="" />
+      <input type="flag" name="Include Read" friendlyname="Include Read" narrative="Optional, default True" expr="False" />
+      <input type="flag" name="Include Unread" friendlyname="Include Unread" narrative="Optional, default True" expr="True" />
+      <input type="text" name="Sub Folder" friendlyname="Sub Folder" narrative="Optional. Any alphanumeric value valid. The Subfolder in the Inbox, eg. Subfolder A needs to be declared as &quot;Subfolder A&quot;. A Nested Subfolder eg. Subfolder B in Subfolder A, needs to be declared as &quot;Subfolder A\Subfolder B&quot;." expr="" />
+      <input type="text" name="Account Display Name" friendlyname="Account Display Name" narrative="Optional. DisplayName of the email account. Default account is used if omitted." expr="" />
+      <input type="text" name="Shared Mailbox" friendlyname="Shared Mailbox" narrative="Optional. Share Mailbox name or email address. Attempt to call Shared Mailbox is only initiated when a vaue is supplied." expr="" />
+    </inputs>
+    <outputs>
+      <output type="collection" name="Items" friendlyname="Items" narrative="Details of items matching the filter" stage="mail" />
+      <output type="number" name="Item Count" friendlyname="Item Count" narrative="Number of items matching the filter" stage="Item Count" />
+    </outputs>
+    <onsuccess>d4e8bf00-c31a-4f6d-9b22-015803a6c149</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Get Received Items (Basic)" />
+  </stage>
+  <stage stageid="b2aa8200-01bf-4f68-a3e8-a4b9d4d49aad" name="mail" type="Collection">
+    <display x="-495" y="-300" w="90" h="30" />
+    <datatype>collection</datatype>
+    <alwaysinit />
+    <collectioninfo>
+      <field name="EntryID" type="text" description="The mail ID. NB this is different from the Mapiex ID." />
+      <field name="To" type="text" description="The display name of the recipient(s)" />
+      <field name="CC" type="text" description="The display name of the copied recipient(s)" />
+      <field name="Subject" type="text" description="The mail subject line" />
+      <field name="Body" type="text" description="The mail message" />
+      <field name="Attachments" type="text" description="The names of the attachements as a CSV string" />
+      <field name="ReceivedOn" type="datetime" description="The date an incoming mail was received" />
+      <field name="SentOn" type="datetime" description="The date an outgoing mail was sent" />
+      <field name="SenderName" type="text" description="The display name of the sender" />
+      <field name="SenderEmailAddress" type="text" description="The email of the sender" />
+      <field name="Unread" type="flag" description="True if an incoming mail has not been read, otherwise False" />
+      <field name="Sensitivity" type="number" description="Sensitivity of an email, from 0 to 3" />
+      <field name="Importance" type="number" description="Importance of an email, from 0 to 2" />
+      <field name="Flag" type="text" description="Flagged status of an email" />
+      <field name="IsHTML" type="flag" description="True if an email is in HTML" />
+    </collectioninfo>
+  </stage>
+  <stage stageid="ea9def9e-281b-4609-b370-8cd97d2a0666" name="Item Count" type="Data">
+    <display x="-495" y="-255" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="958353ab-d8ad-44ca-b662-045ab5ae97aa" name="Loop Start2" type="LoopStart">
+    <loginhibit onsuccess="true" />
+    <display x="-240" y="-210" />
+    <onsuccess>0a616280-51a1-4d8b-8b64-3da81bfaac9d</onsuccess>
+    <groupid>9ca26139-4f48-4b7f-a2f1-abc288bed247</groupid>
+    <looptype>ForEach</looptype>
+    <loopdata>mail</loopdata>
+  </stage>
+  <stage stageid="68084054-5f84-4642-8d6a-995f1bb494c3" name="Loop End2" type="LoopEnd">
+    <loginhibit onsuccess="true" />
+    <display x="-240" y="60" />
+    <onsuccess>6f6b1793-1582-4257-8d32-22e7a6a3208f</onsuccess>
+    <groupid>9ca26139-4f48-4b7f-a2f1-abc288bed247</groupid>
+  </stage>
+  <stage stageid="ea8647bf-7088-4b31-b998-954baecce08a" name="Google Search" type="SubSheetInfo">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-675" y="-255" w="150" h="90" />
+  </stage>
+  <stage stageid="16ead0b2-7d28-4017-a5fe-fff12ac59777" name="Start" type="Start">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-450" y="-435" />
+    <onsuccess>8a0d3fe0-17c2-4486-8c1c-fad18867af28</onsuccess>
+  </stage>
+  <stage stageid="ad1335b9-a4fe-4dd8-9947-061aef245af9" name="End" type="End">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-210" y="540" />
+  </stage>
+  <stage stageid="d32da510-f5ad-41ba-98c7-2ce396021772" name="Yandex Search" type="SubSheetInfo">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-600" y="-240" w="150" h="90" />
+  </stage>
+  <stage stageid="7f6aef6d-ebe3-413e-8926-255962c02e0d" name="Bing Search" type="SubSheetInfo">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-585" y="-225" w="150" h="90" />
+  </stage>
+  <stage stageid="0a2f928b-cdab-4214-bb71-5527c55dcb9d" name="Google Search" type="SubSheet">
+    <loginhibit onsuccess="true" />
+    <display x="-375" y="-105" />
+    <onsuccess>fce80346-ca48-4bac-82bf-bde9e104a182</onsuccess>
+    <processid>6dc938cc-ff33-48b1-9161-7ba131bfde82</processid>
+  </stage>
+  <stage stageid="6fc2c7de-4089-4b09-ae96-a72b509c541b" name="Yandex Search" type="SubSheet">
+    <loginhibit onsuccess="true" />
+    <display x="-375" y="-75" />
+    <onsuccess>622bdf66-b1fa-4628-b126-21a5b4fcb5a0</onsuccess>
+    <processid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</processid>
+  </stage>
+  <stage stageid="f83b6c0d-26af-439f-82c6-212c7bdc5796" name="Bing Search" type="SubSheet">
+    <loginhibit onsuccess="true" />
+    <display x="-375" y="-45" />
+    <onsuccess>81e4bb3d-a0a0-450b-9a1b-206c184c09d0</onsuccess>
+    <processid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</processid>
+  </stage>
+  <stage stageid="81e4bb3d-a0a0-450b-9a1b-206c184c09d0" name="Anchor1" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-450" y="-45" w="10" h="10" />
+    <onsuccess>7a72e6b6-98a1-4c62-8e3a-e67db7d4ee52</onsuccess>
+  </stage>
+  <stage stageid="8a0d3fe0-17c2-4486-8c1c-fad18867af28" name="Utility - Strings::Get Newline Character" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-450" y="-375" w="90" h="60" />
+    <outputs>
+      <output type="text" name="Newline Character" friendlyname="Newline Character" narrative="The new line text" stage="Newline Character Google" />
+    </outputs>
+    <onsuccess>f0a29d47-608f-4c82-9862-4daa844c4efb</onsuccess>
+    <resource object="Utility - Strings" action="Get Newline Character" />
+  </stage>
+  <stage stageid="add05068-d2f8-4843-9dad-f4e8f4a2167d" name="Extract Search Value For Google" type="Calculation">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-345" y="-315" w="150" h="30" />
+    <onsuccess>427d6ebe-0126-43f6-8879-c9c040c3dd26</onsuccess>
+    <calculation expression="Mid([Plain Text Google], InStr([Plain Text Google],&quot;:&quot;)+2 ,InStr([Plain Text Google],[Newline Character Google])+InStr([Plain Text Google],&quot;:&quot;))" stage="Result Google" />
+  </stage>
+  <stage stageid="f73689c0-b9cc-4e33-8dc2-ac9431d2ce0d" name="Newline Character Google" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="315" y="-270" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="2e784d15-8cc4-41de-90a0-d1e71d650db5" name="Result Google" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="315" y="-210" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="427d6ebe-0126-43f6-8879-c9c040c3dd26" name="Google Search::Launch Google" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-345" y="-255" w="120" h="30" />
+    <onsuccess>6bd1cd40-d327-46f6-ae43-4ba50c1816aa</onsuccess>
+    <resource object="Google Search" action="Launch Google" />
+  </stage>
+  <stage stageid="6bd1cd40-d327-46f6-ae43-4ba50c1816aa" name="Google Search::Enter Seach Value" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-345" y="-195" />
+    <inputs>
+      <input type="text" name="Google Search Value" friendlyname="Google Search Value" expr="[Result Google]" />
+    </inputs>
+    <onsuccess>2e925482-a452-42ec-a4a9-3c04030a9641</onsuccess>
+    <resource object="Google Search" action="Enter Seach Value" />
+  </stage>
+  <stage stageid="2e925482-a452-42ec-a4a9-3c04030a9641" name="Google Search::Enter Search" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="-195" w="90" h="30" />
+    <onsuccess>eee553e6-b87b-48da-a4ac-9e0014bd2cf3</onsuccess>
+    <resource object="Google Search" action="Enter Search" />
+  </stage>
+  <stage stageid="eee553e6-b87b-48da-a4ac-9e0014bd2cf3" name="Google Search::Read Search Result" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="-135" w="90" h="30" />
+    <outputs>
+      <output type="text" name="googleSearchResult1" friendlyname="googleSearchResult1" stage="googleSearchResult1" />
+      <output type="text" name="googleSearchResult2" friendlyname="googleSearchResult2" stage="googleSearchResult2" />
+      <output type="text" name="googleSearchResult3" friendlyname="googleSearchResult3" stage="googleSearchResult3" />
+      <output type="text" name="googleSearchSubResult1" friendlyname="googleSearchSubResult1" stage="googleSearchSubResult1" />
+      <output type="text" name="googleSearchSubResult2" friendlyname="googleSearchSubResult2" stage="googleSearchSubResult2" />
+      <output type="text" name="googleSearchSubResult3" friendlyname="googleSearchSubResult3" stage="googleSearchSubResult3" />
+    </outputs>
+    <onsuccess>1fe1a828-4f6a-4c11-90db-569b482bf974</onsuccess>
+    <resource object="Google Search" action="Read Search Result" />
+  </stage>
+  <stage stageid="94ac311c-e5ac-4691-9c7c-1ad33f8fa7e1" name="MS Outlook Email VBO::Send Email" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="540" w="90" h="30" />
+    <inputs>
+      <input type="text" name="To" friendlyname="To" narrative="Mandatory. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;" expr="[mail.SenderEmailAddress]" />
+      <input type="text" name="CC" friendlyname="CC" narrative="Optional. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;. Default blank" expr="" />
+      <input type="text" name="BCC" friendlyname="BCC" narrative="Optional. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;. Default blank" expr="" />
+      <input type="text" name="Subject" friendlyname="Subject" narrative="Optional. Any alphanumeric value allowed." expr="(&quot;Google Arama Sonucu&quot;)" />
+      <input type="text" name="Message" friendlyname="Message" narrative="Optional, HTML or plain text" expr="[mailMessage]" />
+      <input type="text" name="Attachments" friendlyname="Attachments" narrative="Optional, Semicolon--separated file paths. Default blank." expr="&quot;C:\Users\devle\Desktop\RPA Projeler\Blue Prism\SearchResult.xlsx&quot;" />
+      <input type="flag" name="IsHTML" friendlyname="IsHTML" narrative="Optional. True or False, default to True" expr="" />
+      <input type="number" name="Sensitivity" friendlyname="Sensitivity" narrative="Optional. An integer between 0 and 3, default to 0." expr="" />
+      <input type="number" name="Importance" friendlyname="Importance" narrative="Optional. An integer between 0 and 2 default to 1." expr="" />
+      <input type="text" name="Account Display Name" friendlyname="Account Display Name" narrative="Optional. DisplayName of the email account. Default account is used if omitted." expr="" />
+    </inputs>
+    <onsuccess>2551b186-c131-449e-b2c9-76cb08f213f6</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Send Email" />
+  </stage>
+  <stage stageid="94d58960-debc-4f65-afa2-71513379bf58" name="MS Excel VBO::Create Instance" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-345" y="420" w="90" h="30" />
+    <inputs>
+      <input type="flag" name="Enable Events" friendlyname="Enable Events" narrative="Flag to indicate that events should be enabled / disabled on the attached instance - defaulted to True" expr="" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" narrative="An integer which can be used to identify the created instance in subsequent actions" stage="googleHandle" />
+    </outputs>
+    <onsuccess>76188916-d042-4261-845e-a57b20b7043f</onsuccess>
+    <resource object="MS Excel VBO" action="Create Instance" />
+  </stage>
+  <stage stageid="6bc3e5f0-9923-403f-bfa1-c5feb98982b8" name="googleHandle" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="300" y="-150" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="2a81be32-4149-436c-b8e3-a9864e49864e" name="Searched Collection" type="Collection">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="345" y="-105" w="120" h="30" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="Search Tittle" type="text" />
+      <field name="Search Sub Tittle" type="text" />
+    </collectioninfo>
+  </stage>
+  <stage stageid="76188916-d042-4261-845e-a57b20b7043f" name="Open Workbook" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-210" y="420" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the required workbook should be opened. The default of zero indicates the currently active instance." expr="[googleHandle]" />
+      <input type="text" name="File name" friendlyname="File name" narrative="The path and name of the file which should be opened." expr="&quot;C:\Users\devle\Desktop\RPA Projeler\Blue Prism\SearchResult.xlsx&quot;" />
+    </inputs>
+    <outputs>
+      <output type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name used by Excel to identify the workbook - usually this is the file name (without the path)." stage="googleWorbook" />
+    </outputs>
+    <onsuccess>981da0ab-def3-4031-9062-c9b2f27d4ffc</onsuccess>
+    <resource object="MS Excel VBO" action="Open Workbook" />
+  </stage>
+  <stage stageid="7f5240b9-cb5c-4152-92c2-4cfc31534071" name="MS Excel VBO::Write Collection" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-345" y="480" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the specified collection should be written. The default of zero indicates the currently active instance." expr="[googleHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook within which the data should be written. The default empty value indicates the current workbook within the specified instance." expr="[googleWorbook]" />
+      <input type="collection" name="Collection" friendlyname="Collection" narrative="The collection containing the data which should be written to the worksheet." expr="[Searched Collection]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" narrative="The name of the worksheet on which the given data should be written. The default empty value indicates the current sheet within the specified workbook." expr="&quot;Sayfa1&quot;" />
+      <input type="text" name="Cell Reference" friendlyname="Cell Reference" narrative="The reference at which the collection should be written." expr="&quot;A1&quot;" />
+      <input type="flag" name="Include Column Names" friendlyname="Include Column Names" narrative="True to indicate that the column names from the collection should be written out as the first row; False to ignore the column names and just write out the data." expr="True" />
+    </inputs>
+    <onsuccess>9b932f57-7820-42fe-bdf2-f02a92597f1a</onsuccess>
+    <resource object="MS Excel VBO" action="Write Collection" />
+  </stage>
+  <stage stageid="9b932f57-7820-42fe-bdf2-f02a92597f1a" name="MS Excel VBO::Close Workbook" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="480" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the workbook which should be closed resides. The default of zero indicates the currently active instance." expr="[googleHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook which should be closed." expr="[googleWorbook]" />
+      <input type="flag" name="Save Data" friendlyname="Save Data" narrative="True to save the data before closing the workbook; The default of False will discard any changes before closing the workbook." expr="True" />
+    </inputs>
+    <onsuccess>94ac311c-e5ac-4691-9c7c-1ad33f8fa7e1</onsuccess>
+    <resource object="MS Excel VBO" action="Close Workbook" />
+  </stage>
+  <stage stageid="f0a29d47-608f-4c82-9862-4daa844c4efb" name="htmlToPlainText" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-345" y="-375" />
+    <inputs>
+      <input type="text" name="HtmlText" friendlyname="HtmlText" expr="[mail.Body]" />
+    </inputs>
+    <outputs>
+      <output type="text" name="OutputHTML" friendlyname="OutputHTML" stage="Plain Text Google" />
+    </outputs>
+    <onsuccess>add05068-d2f8-4843-9dad-f4e8f4a2167d</onsuccess>
+    <resource object="Utility - Strings" action="HTML Delete" />
+  </stage>
+  <stage stageid="40db3a05-5fe7-4b42-ab54-659e5cb8038e" name="Plain Text Google" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="420" y="-270" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="1fe1a828-4f6a-4c11-90db-569b482bf974" name="Google Search::Close Google" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="-75" w="90" h="30" />
+    <onsuccess>6547fc76-00d0-4f75-9999-49330b6f80e6</onsuccess>
+    <resource object="Google Search" action="Close Google" />
+  </stage>
+  <stage stageid="f97fdc04-98af-4885-9220-ffa4cb862df1" name="googleWorbook" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="405" y="-150" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="d4e8bf00-c31a-4f6d-9b22-015803a6c149" name="mail Count =0 ?" type="Decision">
+    <display x="-90" y="-270" w="90" h="30" />
+    <decision expression="[Item Count]=0" />
+    <ontrue>77148a36-c716-4e1a-b2be-7ea79e323c32</ontrue>
+    <onfalse>b8147cf1-695d-4bc2-a845-ee2ce9d74e20</onfalse>
+  </stage>
+  <stage stageid="77148a36-c716-4e1a-b2be-7ea79e323c32" name="Exception1" type="Exception">
+    <display x="30" y="-270" />
+    <exception localized="yes" type="System Exception" detail="&quot;Gelen Kutusunda Yeni Mail Yok&quot;" />
+  </stage>
+  <stage stageid="b8147cf1-695d-4bc2-a845-ee2ce9d74e20" name="Anchor2" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-90" y="-210" w="10" h="10" />
+    <onsuccess>958353ab-d8ad-44ca-b662-045ab5ae97aa</onsuccess>
+  </stage>
+  <stage stageid="1b5f5303-1b63-4716-ab68-6befe170f529" name="googleSearchResult1" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-675" y="-165" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="c82ac92e-ecac-4116-8ac3-2a0862e72ff1" name="googleSearchResult2" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-690" y="-120" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="dcfc54c7-9a42-4009-9e7f-32e85fa36976" name="googleSearchResult3" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-705" y="-75" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="0b70e872-3c2d-4305-872d-c5f1a327139d" name="googleSearchSubResult1" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-615" y="-165" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="813c872a-94b0-41fa-86cb-875d253e1a0d" name="googleSearchSubResult2" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-630" y="-120" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="8b5e5260-9cd6-4a0d-bde6-42ee17e0c120" name="googleSearchSubResult3" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-645" y="-75" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="bb0816ba-d674-4b5c-b1f3-8d2c0c7b0351" name="mailMessage" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="420" y="-210" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">&lt;p&gt;Merhaba,&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Arama sonucunuz &lt;strong&gt;ek olarak &lt;/strong&gt;g&amp;ouml;nderilmiştir.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;İyi G&amp;uuml;nler&lt;/p&gt;</initialvalue>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="31e0fcc2-bb55-4f6f-a75e-d87af35baa38" name="Exception2" type="Exception">
+    <display x="30" y="0" />
+    <exception localized="yes" type="System Exception" detail="&quot;Search Key Error on Subject&quot;" />
+  </stage>
+  <stage stageid="2551b186-c131-449e-b2c9-76cb08f213f6" name="MS Outlook Email VBO::Mark Email As Read" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-360" y="540" w="90" h="30" />
+    <inputs>
+      <input type="text" name="Entry ID" friendlyname="Entry ID" narrative="Mandatory. An ID obtained from one of the Get Item actions in this object. NB not the same as a Mapiex ID." expr="[mail.EntryID]" />
+    </inputs>
+    <onsuccess>ad1335b9-a4fe-4dd8-9947-061aef245af9</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Mark Email As Read" />
+  </stage>
+  <stage stageid="1b4fb963-761f-4a83-9b03-8587eab60dd2" name="Block1" type="Block">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="255" y="-315" w="210" h="270" />
+    <font family="Segoe UI" size="10" style="Regular" color="7FB2E5" />
+  </stage>
+  <stage stageid="622bdf66-b1fa-4628-b126-21a5b4fcb5a0" name="Anchor3" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-450" y="-75" w="10" h="10" />
+    <onsuccess>81e4bb3d-a0a0-450b-9a1b-206c184c09d0</onsuccess>
+  </stage>
+  <stage stageid="fce80346-ca48-4bac-82bf-bde9e104a182" name="Anchor4" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-450" y="-105" w="10" h="10" />
+    <onsuccess>622bdf66-b1fa-4628-b126-21a5b4fcb5a0</onsuccess>
+  </stage>
+  <stage stageid="7a72e6b6-98a1-4c62-8e3a-e67db7d4ee52" name="Anchor5" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-450" y="60" w="10" h="10" />
+    <onsuccess>68084054-5f84-4642-8d6a-995f1bb494c3</onsuccess>
+  </stage>
+  <stage stageid="0a616280-51a1-4d8b-8b64-3da81bfaac9d" name="Choice1" type="ChoiceStart">
+    <display x="-240" y="-150" />
+    <groupid>9bbb5296-33b6-4aa5-a1a4-bc9458171519</groupid>
+    <choices>
+      <choice expression="[mail.Subject]=&quot;Google Arama&quot;">
+        <name>Google ?</name>
+        <distance>45</distance>
+        <ontrue>0a2f928b-cdab-4214-bb71-5527c55dcb9d</ontrue>
+      </choice>
+      <choice expression="[mail.Subject]=&quot;Yandex Arama&quot;">
+        <name>Yandex ?</name>
+        <distance>75</distance>
+        <ontrue>6fc2c7de-4089-4b09-ae96-a72b509c541b</ontrue>
+      </choice>
+      <choice expression="[mail.Subject]=&quot;Bing Arama&quot;">
+        <name>Bing ?</name>
+        <distance>105</distance>
+        <ontrue>f83b6c0d-26af-439f-82c6-212c7bdc5796</ontrue>
+      </choice>
+    </choices>
+  </stage>
+  <stage stageid="578ef948-02f3-4c3c-84d5-49fca47e6f5d" name="Otherwise1" type="ChoiceEnd">
+    <display x="-240" y="0" />
+    <onsuccess>31e0fcc2-bb55-4f6f-a75e-d87af35baa38</onsuccess>
+    <groupid>9bbb5296-33b6-4aa5-a1a4-bc9458171519</groupid>
+  </stage>
+  <stage stageid="981da0ab-def3-4031-9062-c9b2f27d4ffc" name="MS Excel VBO::Open Instance" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-210" y="480" />
+    <inputs>
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook which should be opened. An empty value indicates that the first activated instance of Excel should be opened." expr="[googleWorbook]" />
+      <input type="flag" name="Enable Events?" friendlyname="Enable Events?" narrative="Flag to indicate whether events (ie. macros) should be enabled on the given instance. Default is True" expr="" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" narrative="The integer handle with which the instance can be identified in later actions." stage="googleHandle" />
+    </outputs>
+    <onsuccess>7f5240b9-cb5c-4152-92c2-4cfc31534071</onsuccess>
+    <resource object="MS Excel VBO" action="Open Instance" />
+  </stage>
+  <stage stageid="f90869e4-387a-497b-aa25-a71cce7d9134" name="Start" type="Start">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-405" y="-495" />
+    <onsuccess>35c9bcd7-dbd8-4e19-acf5-f3b09cbd71eb</onsuccess>
+  </stage>
+  <stage stageid="15049672-20af-4fb8-abaa-c775dfd4f33b" name="End" type="End">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-120" y="510" />
+  </stage>
+  <stage stageid="35c9bcd7-dbd8-4e19-acf5-f3b09cbd71eb" name="Utility - Strings::Get Newline Character" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-405" y="-420" w="90" h="60" />
+    <outputs>
+      <output type="text" name="Newline Character" friendlyname="Newline Character" narrative="The new line text" stage="Newline Character Yandex" />
+    </outputs>
+    <onsuccess>3f5a8977-fe0b-4bda-ac35-9d2292618f6f</onsuccess>
+    <resource object="Utility - Strings" action="Get Newline Character" />
+  </stage>
+  <stage stageid="e5fb58bd-1a54-4f01-a39b-9269dc1a88c0" name="Extract Search Value For Google" type="Calculation">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-270" y="-345" w="150" h="30" />
+    <onsuccess>eccb5e87-9835-4a19-9fbf-0838f2fd2ccb</onsuccess>
+    <calculation expression="Mid([Plain Text Yandex], InStr([Plain Text Yandex],&quot;:&quot;)+2 ,InStr([Plain Text Yandex],[Newline Character Yandex])+InStr([Plain Text Yandex],&quot;:&quot;))" stage="Result Yandex" />
+  </stage>
+  <stage stageid="eccb5e87-9835-4a19-9fbf-0838f2fd2ccb" name="Yandex Search::Launch" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-270" y="-285" w="120" h="30" />
+    <onsuccess>e06f33e6-bf01-4bb3-a214-80391a82499f</onsuccess>
+    <resource object="Yandex Search" action="Launch" />
+  </stage>
+  <stage stageid="e06f33e6-bf01-4bb3-a214-80391a82499f" name="Yandex Search::Enter Key Value" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-270" y="-225" />
+    <inputs>
+      <input type="text" name="yandexSearchKey" friendlyname="yandexSearchKey" expr="[Result Yandex]" />
+    </inputs>
+    <onsuccess>06ce6f8e-2a46-450d-8845-8e72fd40a6fe</onsuccess>
+    <resource object="Yandex Search" action="Enter Key Value" />
+  </stage>
+  <stage stageid="06ce6f8e-2a46-450d-8845-8e72fd40a6fe" name="Yandex Search::Search Button" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="-225" w="90" h="30" />
+    <onsuccess>7054bfe0-ea4b-4e3e-90a9-d826b9a41415</onsuccess>
+    <resource object="Yandex Search" action="Search Button" />
+  </stage>
+  <stage stageid="7054bfe0-ea4b-4e3e-90a9-d826b9a41415" name="Yandex Search::Read Result" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="-165" w="90" h="30" />
+    <outputs>
+      <output type="text" name="Yandex Result 1" friendlyname="Yandex Result 1" stage="Yandex Result 1" />
+      <output type="text" name="Yandex Result 2" friendlyname="Yandex Result 2" stage="Yandex Result 2" />
+      <output type="text" name="Yandex Result 3" friendlyname="Yandex Result 3" stage="Yandex Result 3" />
+      <output type="text" name="Yandex Sub Result 1" friendlyname="Yandex Sub Result 1" stage="Yandex Sub Result 1" />
+      <output type="text" name="Yandex Sub Result 2" friendlyname="Yandex Sub Result 2" stage="Yandex Sub Result 2" />
+      <output type="text" name="Yandex Sub Result 3" friendlyname="Yandex Sub Result 3" stage="Yandex Sub Result 3" />
+    </outputs>
+    <onsuccess>0c104b87-1bba-444c-978d-332ab850820f</onsuccess>
+    <resource object="Yandex Search" action="Read Result" />
+  </stage>
+  <stage stageid="7e8e7f3a-d172-4c04-aa45-c1e9e860dcef" name="MS Outlook Email VBO::Send Email" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="510" w="90" h="30" />
+    <inputs>
+      <input type="text" name="To" friendlyname="To" narrative="Mandatory. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;" expr="[mail.SenderEmailAddress]" />
+      <input type="text" name="CC" friendlyname="CC" narrative="Optional. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;. Default blank" expr="" />
+      <input type="text" name="BCC" friendlyname="BCC" narrative="Optional. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;. Default blank" expr="" />
+      <input type="text" name="Subject" friendlyname="Subject" narrative="Optional. Any alphanumeric value allowed." expr="(&quot;Yandex Arama Sonucu&quot;)" />
+      <input type="text" name="Message" friendlyname="Message" narrative="Optional, HTML or plain text" expr="[mailMessage]" />
+      <input type="text" name="Attachments" friendlyname="Attachments" narrative="Optional, Semicolon--separated file paths. Default blank." expr="&quot;C:\Users\devle\Desktop\RPA Projeler\Blue Prism\SearchResult - Yandex.xlsx&quot;" />
+      <input type="flag" name="IsHTML" friendlyname="IsHTML" narrative="Optional. True or False, default to True" expr="" />
+      <input type="number" name="Sensitivity" friendlyname="Sensitivity" narrative="Optional. An integer between 0 and 3, default to 0." expr="" />
+      <input type="number" name="Importance" friendlyname="Importance" narrative="Optional. An integer between 0 and 2 default to 1." expr="" />
+      <input type="text" name="Account Display Name" friendlyname="Account Display Name" narrative="Optional. DisplayName of the email account. Default account is used if omitted." expr="" />
+    </inputs>
+    <onsuccess>07d7dcb8-36a5-4a7a-b1d6-a45dd3f062dc</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Send Email" />
+  </stage>
+  <stage stageid="6839617f-fb7d-4b3d-a5d6-f8b24e8876a0" name="MS Excel VBO::Create Instance" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-255" y="390" w="90" h="30" />
+    <inputs>
+      <input type="flag" name="Enable Events" friendlyname="Enable Events" narrative="Flag to indicate that events should be enabled / disabled on the attached instance - defaulted to True" expr="" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" narrative="An integer which can be used to identify the created instance in subsequent actions" stage="yandexHandle" />
+    </outputs>
+    <onsuccess>35bd1aaa-0b9a-4530-87ca-fed426f7409f</onsuccess>
+    <resource object="MS Excel VBO" action="Create Instance" />
+  </stage>
+  <stage stageid="35bd1aaa-0b9a-4530-87ca-fed426f7409f" name="Open Workbook" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-120" y="390" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the required workbook should be opened. The default of zero indicates the currently active instance." expr="[yandexHandle]" />
+      <input type="text" name="File name" friendlyname="File name" narrative="The path and name of the file which should be opened." expr="&quot;C:\Users\devle\Desktop\RPA Projeler\Blue Prism\SearchResult - Yandex.xlsx&quot;" />
+    </inputs>
+    <outputs>
+      <output type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name used by Excel to identify the workbook - usually this is the file name (without the path)." stage="yandexWorkbook" />
+    </outputs>
+    <onsuccess>ae50c949-c156-426a-81cb-fd4688649e92</onsuccess>
+    <resource object="MS Excel VBO" action="Open Workbook" />
+  </stage>
+  <stage stageid="dc7a2438-8446-4317-a0d2-ec0d60e4e012" name="MS Excel VBO::Write Collection" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-255" y="450" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the specified collection should be written. The default of zero indicates the currently active instance." expr="[yandexHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook within which the data should be written. The default empty value indicates the current workbook within the specified instance." expr="[yandexWorkbook]" />
+      <input type="collection" name="Collection" friendlyname="Collection" narrative="The collection containing the data which should be written to the worksheet." expr="[Searched Collection Yandex]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" narrative="The name of the worksheet on which the given data should be written. The default empty value indicates the current sheet within the specified workbook." expr="&quot;Sayfa1&quot;" />
+      <input type="text" name="Cell Reference" friendlyname="Cell Reference" narrative="The reference at which the collection should be written." expr="&quot;A1&quot;" />
+      <input type="flag" name="Include Column Names" friendlyname="Include Column Names" narrative="True to indicate that the column names from the collection should be written out as the first row; False to ignore the column names and just write out the data." expr="True" />
+    </inputs>
+    <onsuccess>10d66063-2532-413e-9886-d4c59e5ccc66</onsuccess>
+    <resource object="MS Excel VBO" action="Write Collection" />
+  </stage>
+  <stage stageid="10d66063-2532-413e-9886-d4c59e5ccc66" name="MS Excel VBO::Close Workbook" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="450" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the workbook which should be closed resides. The default of zero indicates the currently active instance." expr="[yandexHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook which should be closed." expr="[yandexWorkbook]" />
+      <input type="flag" name="Save Data" friendlyname="Save Data" narrative="True to save the data before closing the workbook; The default of False will discard any changes before closing the workbook." expr="True" />
+    </inputs>
+    <onsuccess>7e8e7f3a-d172-4c04-aa45-c1e9e860dcef</onsuccess>
+    <resource object="MS Excel VBO" action="Close Workbook" />
+  </stage>
+  <stage stageid="3f5a8977-fe0b-4bda-ac35-9d2292618f6f" name="htmlToPlainText" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-270" y="-420" />
+    <inputs>
+      <input type="text" name="HtmlText" friendlyname="HtmlText" expr="[mail.Body]" />
+    </inputs>
+    <outputs>
+      <output type="text" name="OutputHTML" friendlyname="OutputHTML" stage="Plain Text Yandex" />
+    </outputs>
+    <onsuccess>e5fb58bd-1a54-4f01-a39b-9269dc1a88c0</onsuccess>
+    <resource object="Utility - Strings" action="HTML Delete" />
+  </stage>
+  <stage stageid="0c104b87-1bba-444c-978d-332ab850820f" name="Yandex Search::Close Yandex" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="-105" w="90" h="30" />
+    <onsuccess>1cee4bad-bba4-4167-b5cc-cbf61e6a8b49</onsuccess>
+    <resource object="Yandex Search" action="Close Yandex" />
+  </stage>
+  <stage stageid="07d7dcb8-36a5-4a7a-b1d6-a45dd3f062dc" name="MS Outlook Email VBO::Mark Email As Read" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-255" y="510" w="90" h="30" />
+    <inputs>
+      <input type="text" name="Entry ID" friendlyname="Entry ID" narrative="Mandatory. An ID obtained from one of the Get Item actions in this object. NB not the same as a Mapiex ID." expr="[mail.EntryID]" />
+    </inputs>
+    <onsuccess>15049672-20af-4fb8-abaa-c775dfd4f33b</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Mark Email As Read" />
+  </stage>
+  <stage stageid="ae50c949-c156-426a-81cb-fd4688649e92" name="MS Excel VBO::Open Instance" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-120" y="450" />
+    <inputs>
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook which should be opened. An empty value indicates that the first activated instance of Excel should be opened." expr="[yandexWorkbook]" />
+      <input type="flag" name="Enable Events?" friendlyname="Enable Events?" narrative="Flag to indicate whether events (ie. macros) should be enabled on the given instance. Default is True" expr="" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" narrative="The integer handle with which the instance can be identified in later actions." stage="yandexHandle" />
+    </outputs>
+    <onsuccess>dc7a2438-8446-4317-a0d2-ec0d60e4e012</onsuccess>
+    <resource object="MS Excel VBO" action="Open Instance" />
+  </stage>
+  <stage stageid="0b757b31-6e8e-408c-adad-7c8c102e7c59" name="Newline Character Yandex" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="420" y="-210" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="82f7b2d7-9b8b-4047-8803-969665d31476" name="Plain Text Yandex" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="510" y="-210" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="a4a49ea0-7c3c-490f-bb20-9b165d3bede9" name="Result Yandex" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="420" y="-165" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="22838532-ac21-4ca6-948a-c3e0e4ef39c4" name="Yandex Result 1" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-660" y="-135" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="b014ecfb-f384-4434-9883-57c5b3ad5d76" name="Yandex Result 2" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-660" y="-90" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="4763ec18-ac66-4a37-aa1c-ae82cffad142" name="Yandex Result 3" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-660" y="-45" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="1fb58f3a-4eef-4011-a258-3636ad89f544" name="Yandex Sub Result 1" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-585" y="-135" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="72d134a7-c7a3-4169-90cf-e05d0d943dbd" name="Yandex Sub Result 2" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-600" y="-45" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="df581af3-a055-40ec-bd3f-018742f138ef" name="Yandex Sub Result 3" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-585" y="-90" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="646ebc1e-5ecf-44bc-a9f6-e61956221e05" name="DUMMY Searched Collection Yandex" type="Collection">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="510" y="-165" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="Tittle" type="text" />
+      <field name="Sub Tittle" type="text" />
+    </collectioninfo>
+    <initialvalue>
+      <row>
+        <field name="Tittle" type="text" value="" />
+        <field name="Sub Tittle" type="text" value="" />
+      </row>
+      <row>
+        <field name="Tittle" type="text" value="" />
+        <field name="Sub Tittle" type="text" value="" />
+      </row>
+      <row>
+        <field name="Tittle" type="text" value="" />
+        <field name="Sub Tittle" type="text" value="" />
+      </row>
+    </initialvalue>
+  </stage>
+  <stage stageid="baf26b22-6b6b-4eaa-a805-90f45605ae24" name="yandexHandle" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="405" y="-105" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="9f3923a7-14a1-4d30-bd4d-9d16245b2f7e" name="yandexWorkbook" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="510" y="-105" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="73a9c58e-a3cf-4f65-bdab-bf90a9cce5a0" name="mailMessage" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="405" y="-45" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">&lt;p&gt;Merhaba,&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Arama sonucunuz &lt;strong&gt;ek olarak &lt;/strong&gt;g&amp;ouml;nderilmiştir.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;İyi G&amp;uuml;nler&lt;/p&gt;</initialvalue>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="ccee38ba-0e9f-4103-a52f-58dcf72fb5b7" name="Start" type="Start">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-390" y="-390" />
+    <onsuccess>833adf5a-18b2-44b2-a67c-06e42de3f7d6</onsuccess>
+  </stage>
+  <stage stageid="f027d6d3-59d3-43c7-a74a-f0eb7f79b23b" name="End" type="End">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-165" y="540" />
+  </stage>
+  <stage stageid="833adf5a-18b2-44b2-a67c-06e42de3f7d6" name="Utility - Strings::Get Newline Character" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="-315" w="90" h="60" />
+    <outputs>
+      <output type="text" name="Newline Character" friendlyname="Newline Character" narrative="The new line text" stage="Newline Character Bing" />
+    </outputs>
+    <onsuccess>8e138102-acd1-4a4a-a91b-6db6289cf79b</onsuccess>
+    <resource object="Utility - Strings" action="Get Newline Character" />
+  </stage>
+  <stage stageid="df5a8705-542d-4afd-932d-542d5545a059" name="Extract Search Value For Bing" type="Calculation">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-255" y="-255" w="150" h="30" />
+    <onsuccess>f0960363-a08e-461c-b4b7-5b2ea477b918</onsuccess>
+    <calculation expression="Mid([Plain Text Bing], InStr([Plain Text Bing],&quot;:&quot;)+2 ,InStr([Plain Text Bing],[Newline Character Bing])+InStr([Plain Text Bing],&quot;:&quot;))" stage="Result Bing" />
+  </stage>
+  <stage stageid="f0960363-a08e-461c-b4b7-5b2ea477b918" name="Bing Search::Launch" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-255" y="-195" w="120" h="30" />
+    <onsuccess>068169c4-d13e-4378-9481-bc3fac0334b2</onsuccess>
+    <resource object="Bing Search" action="Launch" />
+  </stage>
+  <stage stageid="068169c4-d13e-4378-9481-bc3fac0334b2" name="Bing Search::Search Key " type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-255" y="-135" />
+    <inputs>
+      <input type="text" name="bingSearchKey" friendlyname="bingSearchKey" expr="[Result Bing]" />
+    </inputs>
+    <onsuccess>4130f2e6-60db-484f-a59b-5f2b03cc412a</onsuccess>
+    <resource object="Bing Search" action="Search Key " />
+  </stage>
+  <stage stageid="4130f2e6-60db-484f-a59b-5f2b03cc412a" name="Bing Search::Result" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="-135" w="90" h="30" />
+    <outputs>
+      <output type="text" name="Bing Result 1" friendlyname="Bing Result 1" stage="Bing Result 1" />
+      <output type="text" name="Bing Result 2" friendlyname="Bing Result 2" stage="Bing Result 2" />
+      <output type="text" name="Bing Result 3" friendlyname="Bing Result 3" stage="Bing Result 3" />
+      <output type="text" name="Bing Sub Result 1" friendlyname="Bing Sub Result 1" stage="Bing Sub Result 1" />
+      <output type="text" name="Bing Sub Result 2" friendlyname="Bing Sub Result 2" stage="Bing Sub Result 2" />
+      <output type="text" name="Bing Sub Result 3" friendlyname="Bing Sub Result 3" stage="Bing Sub Result 3" />
+    </outputs>
+    <onsuccess>5174fcb3-2278-4bc2-8156-1e19a63b5369</onsuccess>
+    <resource object="Bing Search" action="Result" />
+  </stage>
+  <stage stageid="0a0dec55-53e1-42a2-9b55-b4ba05fe9933" name="MS Outlook Email VBO::Send Email" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="540" w="90" h="30" />
+    <inputs>
+      <input type="text" name="To" friendlyname="To" narrative="Mandatory. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;" expr="[mail.SenderEmailAddress]" />
+      <input type="text" name="CC" friendlyname="CC" narrative="Optional. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;. Default blank" expr="" />
+      <input type="text" name="BCC" friendlyname="BCC" narrative="Optional. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;. Default blank" expr="" />
+      <input type="text" name="Subject" friendlyname="Subject" narrative="Optional. Any alphanumeric value allowed." expr="(&quot;Bing Arama Sonucu&quot;)" />
+      <input type="text" name="Message" friendlyname="Message" narrative="Optional, HTML or plain text" expr="[mailMessage]" />
+      <input type="text" name="Attachments" friendlyname="Attachments" narrative="Optional, Semicolon--separated file paths. Default blank." expr="&quot;C:\Users\devle\Desktop\RPA Projeler\Blue Prism\SearchResult - Bing.xlsx&quot;" />
+      <input type="flag" name="IsHTML" friendlyname="IsHTML" narrative="Optional. True or False, default to True" expr="" />
+      <input type="number" name="Sensitivity" friendlyname="Sensitivity" narrative="Optional. An integer between 0 and 3, default to 0." expr="" />
+      <input type="number" name="Importance" friendlyname="Importance" narrative="Optional. An integer between 0 and 2 default to 1." expr="" />
+      <input type="text" name="Account Display Name" friendlyname="Account Display Name" narrative="Optional. DisplayName of the email account. Default account is used if omitted." expr="" />
+    </inputs>
+    <onsuccess>d330c2ad-4cf2-4846-a3ed-0ae1a96a6137</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Send Email" />
+  </stage>
+  <stage stageid="3c947ad7-85ef-4b19-b5d3-1d49d596407a" name="MS Excel VBO::Create Instance" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-315" y="420" w="90" h="30" />
+    <inputs>
+      <input type="flag" name="Enable Events" friendlyname="Enable Events" narrative="Flag to indicate that events should be enabled / disabled on the attached instance - defaulted to True" expr="" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" narrative="An integer which can be used to identify the created instance in subsequent actions" stage="bingHandle" />
+    </outputs>
+    <onsuccess>47e013be-564a-4702-8afb-95d67ec41230</onsuccess>
+    <resource object="MS Excel VBO" action="Create Instance" />
+  </stage>
+  <stage stageid="47e013be-564a-4702-8afb-95d67ec41230" name="Open Workbook" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-165" y="420" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the required workbook should be opened. The default of zero indicates the currently active instance." expr="[bingHandle]" />
+      <input type="text" name="File name" friendlyname="File name" narrative="The path and name of the file which should be opened." expr="&quot;C:\Users\devle\Desktop\RPA Projeler\Blue Prism\SearchResult - Bing.xlsx&quot;" />
+    </inputs>
+    <outputs>
+      <output type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name used by Excel to identify the workbook - usually this is the file name (without the path)." stage="bingWorkbook" />
+    </outputs>
+    <onsuccess>b37f543c-7de0-455b-bd4c-48b1185b7070</onsuccess>
+    <resource object="MS Excel VBO" action="Open Workbook" />
+  </stage>
+  <stage stageid="c9cc2572-ca83-468e-ad25-0dc9e5aa0dc3" name="MS Excel VBO::Write Collection" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-315" y="480" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the specified collection should be written. The default of zero indicates the currently active instance." expr="[bingHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook within which the data should be written. The default empty value indicates the current workbook within the specified instance." expr="[bingWorkbook]" />
+      <input type="collection" name="Collection" friendlyname="Collection" narrative="The collection containing the data which should be written to the worksheet." expr="[Serached Collection Bing]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" narrative="The name of the worksheet on which the given data should be written. The default empty value indicates the current sheet within the specified workbook." expr="&quot;Sayfa1&quot;" />
+      <input type="text" name="Cell Reference" friendlyname="Cell Reference" narrative="The reference at which the collection should be written." expr="&quot;A1&quot;" />
+      <input type="flag" name="Include Column Names" friendlyname="Include Column Names" narrative="True to indicate that the column names from the collection should be written out as the first row; False to ignore the column names and just write out the data." expr="True" />
+    </inputs>
+    <onsuccess>c2f00f75-4b91-4133-a8ff-e7eb579a66bb</onsuccess>
+    <resource object="MS Excel VBO" action="Write Collection" />
+  </stage>
+  <stage stageid="c2f00f75-4b91-4133-a8ff-e7eb579a66bb" name="MS Excel VBO::Close Workbook" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="480" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the workbook which should be closed resides. The default of zero indicates the currently active instance." expr="[bingHandle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook which should be closed." expr="[bingWorkbook]" />
+      <input type="flag" name="Save Data" friendlyname="Save Data" narrative="True to save the data before closing the workbook; The default of False will discard any changes before closing the workbook." expr="True" />
+    </inputs>
+    <onsuccess>0a0dec55-53e1-42a2-9b55-b4ba05fe9933</onsuccess>
+    <resource object="MS Excel VBO" action="Close Workbook" />
+  </stage>
+  <stage stageid="8e138102-acd1-4a4a-a91b-6db6289cf79b" name="htmlToPlainText" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-255" y="-315" />
+    <inputs>
+      <input type="text" name="HtmlText" friendlyname="HtmlText" expr="[mail.Body]" />
+    </inputs>
+    <outputs>
+      <output type="text" name="OutputHTML" friendlyname="OutputHTML" stage="Plain Text Bing" />
+    </outputs>
+    <onsuccess>df5a8705-542d-4afd-932d-542d5545a059</onsuccess>
+    <resource object="Utility - Strings" action="HTML Delete" />
+  </stage>
+  <stage stageid="5174fcb3-2278-4bc2-8156-1e19a63b5369" name="Bing Search::Close Bing" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="-75" w="90" h="30" />
+    <onsuccess>5f27ead1-31c8-422c-b533-4d2a8d0567e6</onsuccess>
+    <resource object="Bing Search" action="Close Bing" />
+  </stage>
+  <stage stageid="d330c2ad-4cf2-4846-a3ed-0ae1a96a6137" name="MS Outlook Email VBO::Mark Email As Read" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-315" y="540" w="90" h="30" />
+    <inputs>
+      <input type="text" name="Entry ID" friendlyname="Entry ID" narrative="Mandatory. An ID obtained from one of the Get Item actions in this object. NB not the same as a Mapiex ID." expr="[mail.EntryID]" />
+    </inputs>
+    <onsuccess>f027d6d3-59d3-43c7-a74a-f0eb7f79b23b</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Mark Email As Read" />
+  </stage>
+  <stage stageid="b37f543c-7de0-455b-bd4c-48b1185b7070" name="MS Excel VBO::Open Instance" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-165" y="480" />
+    <inputs>
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook which should be opened. An empty value indicates that the first activated instance of Excel should be opened." expr="[bingWorkbook]" />
+      <input type="flag" name="Enable Events?" friendlyname="Enable Events?" narrative="Flag to indicate whether events (ie. macros) should be enabled on the given instance. Default is True" expr="" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" narrative="The integer handle with which the instance can be identified in later actions." stage="bingHandle" />
+    </outputs>
+    <onsuccess>c9cc2572-ca83-468e-ad25-0dc9e5aa0dc3</onsuccess>
+    <resource object="MS Excel VBO" action="Open Instance" />
+  </stage>
+  <stage stageid="37d7e31a-0bb4-4636-b35b-c1a18afcd5d4" name="Newline Character Bing" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="390" y="-195" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="ad297bf8-23e3-438e-a6aa-b53f5fad8b34" name="Plain Text Bing" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="495" y="-195" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="02dc33fd-48f3-4867-a4db-9eafce14dfe6" name="Result Bing" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="375" y="-150" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="59b69d91-cbac-4551-9086-aaecb7f094bb" name="Bing Result 1" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-645" y="-135" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="dd258329-f3ec-4784-9ebc-5eada190c6d9" name="Bing Result 2" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-645" y="-90" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="ef1a449f-3957-4e01-aac2-2ffbb97f7f0a" name="Bing Result 3" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-660" y="-45" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="ee3d53a0-63d1-48dc-81a9-51677923d147" name="Bing Sub Result 1" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-570" y="-135" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="05c794ea-16ea-42f0-8dee-c3721b8d10b6" name="Bing Sub Result 2" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-585" y="-90" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="0b09532a-6637-422e-aeb2-6da173a0bcde" name="Bing Sub Result 3" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-585" y="-45" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="01f39e5c-4e8e-4ff8-9528-9f1037b6b5f3" name="Serached Collection Bing" type="Collection">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="495" y="-150" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="No" type="text" />
+      <field name="Tittle" type="text" />
+      <field name="Sub Tittle" type="text" />
+    </collectioninfo>
+    <initialvalue>
+      <row>
+        <field name="No" type="text" value="1" />
+        <field name="Tittle" type="text" value="" />
+        <field name="Sub Tittle" type="text" value="" />
+      </row>
+      <row>
+        <field name="No" type="text" value="2" />
+        <field name="Tittle" type="text" value="" />
+        <field name="Sub Tittle" type="text" value="" />
+      </row>
+      <row>
+        <field name="No" type="text" value="3" />
+        <field name="Tittle" type="text" value="" />
+        <field name="Sub Tittle" type="text" value="" />
+      </row>
+    </initialvalue>
+  </stage>
+  <stage stageid="b0ee2d49-cb6c-491e-875b-9c6183587dc1" name="bingHandle" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="375" y="-90" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="6109be4a-9dbc-4469-9d61-35398d4e5342" name="bingWorkbook" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="480" y="-90" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="f3115470-8569-47ee-a95a-13f1abe67cbc" name="mailMessage" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="375" y="-30" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">&lt;p&gt;Merhaba,&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;Arama sonucunuz &lt;strong&gt;ek olarak &lt;/strong&gt;g&amp;ouml;nderilmiştir.&lt;/p&gt;
+&lt;p&gt;&lt;br&gt;&lt;/p&gt;
+&lt;p&gt;İyi G&amp;uuml;nler&lt;/p&gt;</initialvalue>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="14dd0e5e-295a-4def-8c8f-dcbe5b56ecc0" name="Loop Start1" type="LoopStart">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="0" />
+    <onsuccess>01208c08-eee7-4557-8868-1c438936e720</onsuccess>
+    <groupid>f695367e-b1fb-46bc-a665-78fe8fc905ac</groupid>
+    <looptype>ForEach</looptype>
+    <loopdata>DUMMY Searched Collection Yandex</loopdata>
+  </stage>
+  <stage stageid="59e29b75-e644-46dc-8fcc-83a20e3c37d7" name="Loop End1" type="LoopEnd">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="390" />
+    <onsuccess>6839617f-fb7d-4b3d-a5d6-f8b24e8876a0</onsuccess>
+    <groupid>f695367e-b1fb-46bc-a665-78fe8fc905ac</groupid>
+  </stage>
+  <stage stageid="01208c08-eee7-4557-8868-1c438936e720" name="Collections::Add Row" type="Action">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="45" />
+    <inputs>
+      <input type="text" name="Collection Name" friendlyname="Collection Name" narrative="The name of the collection to act upon" expr="&quot;Searched Collection Yandex&quot;" />
+    </inputs>
+    <onsuccess>eaaf7ced-8431-465d-a4ed-b1ffb7247a4f</onsuccess>
+    <resource object="Blueprism.AutomateProcessCore.clsCollectionActions" action="Add Row" />
+  </stage>
+  <stage stageid="9c9390fe-4ef7-4514-a44b-1de95fb59cc7" name="Searched Collection Yandex" type="Collection">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="525" y="15" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="Tittle" type="text" />
+      <field name="Sub Tittle" type="text" />
+    </collectioninfo>
+  </stage>
+  <stage stageid="1cee4bad-bba4-4167-b5cc-cbf61e6a8b49" name="Calc1" type="Calculation">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="-45" />
+    <onsuccess>14dd0e5e-295a-4def-8c8f-dcbe5b56ecc0</onsuccess>
+    <calculation expression="1" stage="counter" />
+  </stage>
+  <stage stageid="18f30056-c4c3-4d72-be17-9b6982bd4e5b" name="counter" type="Data">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="495" y="-45" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="eaaf7ced-8431-465d-a4ed-b1ffb7247a4f" name="Choice2" type="ChoiceStart">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-390" y="90" />
+    <groupid>5c9c83ec-a857-4801-a958-e6fa947e898f</groupid>
+    <choices>
+      <choice expression="[counter]=1">
+        <name>counter =1</name>
+        <distance>30</distance>
+        <ontrue>ed9cb435-2e75-44a7-b2d5-48723bf0b65d</ontrue>
+      </choice>
+      <choice expression="[counter]=2">
+        <name>counter =2</name>
+        <distance>90</distance>
+        <ontrue>80b328f2-8838-4cc9-88e5-9f5a895dd6d7</ontrue>
+      </choice>
+      <choice expression="[counter]=3">
+        <name>counter =3</name>
+        <distance>150</distance>
+        <ontrue>75331884-20d7-4a70-a68d-6d9c0bc50a69</ontrue>
+      </choice>
+    </choices>
+  </stage>
+  <stage stageid="1ce97e07-2c57-418a-b326-da32a3fc87d7" name="Otherwise2" type="ChoiceEnd">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <display x="-390" y="270" />
+    <onsuccess>5a77bc68-6a5b-48c3-888c-6b07623b2f24</onsuccess>
+    <groupid>5c9c83ec-a857-4801-a958-e6fa947e898f</groupid>
+  </stage>
+  <stage stageid="5a77bc68-6a5b-48c3-888c-6b07623b2f24" name="counter++" type="Calculation">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-390" y="330" />
+    <onsuccess>59e29b75-e644-46dc-8fcc-83a20e3c37d7</onsuccess>
+    <calculation expression="[counter]+1" stage="counter" />
+  </stage>
+  <stage stageid="ed9cb435-2e75-44a7-b2d5-48723bf0b65d" name="Multi1" type="MultipleCalculation">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-270" y="120" />
+    <onsuccess>81175567-42eb-481c-b64d-ffd5eba14db2</onsuccess>
+    <steps>
+      <calculation expression="[Yandex Result 1]" stage="Searched Collection Yandex.Tittle" />
+      <calculation expression="[Yandex Sub Result 1]" stage="Searched Collection Yandex.Sub Tittle" />
+    </steps>
+  </stage>
+  <stage stageid="80b328f2-8838-4cc9-88e5-9f5a895dd6d7" name="Multi1" type="MultipleCalculation">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-270" y="180" />
+    <onsuccess>38708855-94ae-42ac-9ed0-5e72621358ae</onsuccess>
+    <steps>
+      <calculation expression="[Yandex Result 2]" stage="Searched Collection Yandex.Tittle" />
+      <calculation expression="[Yandex Sub Result 2]" stage="Searched Collection Yandex.Sub Tittle" />
+    </steps>
+  </stage>
+  <stage stageid="75331884-20d7-4a70-a68d-6d9c0bc50a69" name="Multi1" type="MultipleCalculation">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-270" y="240" />
+    <onsuccess>b4e8705d-bbad-4d11-80a7-3449c07a9893</onsuccess>
+    <steps>
+      <calculation expression="[Yandex Result 3]" stage="Searched Collection Yandex.Tittle" />
+      <calculation expression="[Yandex Sub Result 3]" stage="Searched Collection Yandex.Sub Tittle" />
+    </steps>
+  </stage>
+  <stage stageid="81175567-42eb-481c-b64d-ffd5eba14db2" name="Anchor6" type="Anchor">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-90" y="120" w="10" h="10" />
+    <onsuccess>38708855-94ae-42ac-9ed0-5e72621358ae</onsuccess>
+  </stage>
+  <stage stageid="5938f7b6-fb18-4fcc-ba7c-fa69f4f10913" name="Anchor7" type="Anchor">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-90" y="330" w="10" h="10" />
+    <onsuccess>5a77bc68-6a5b-48c3-888c-6b07623b2f24</onsuccess>
+  </stage>
+  <stage stageid="38708855-94ae-42ac-9ed0-5e72621358ae" name="Anchor9" type="Anchor">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-90" y="180" w="10" h="10" />
+    <onsuccess>b4e8705d-bbad-4d11-80a7-3449c07a9893</onsuccess>
+  </stage>
+  <stage stageid="b4e8705d-bbad-4d11-80a7-3449c07a9893" name="Anchor10" type="Anchor">
+    <subsheetid>eaa7adb3-7947-4b3c-906a-d1c3791a3ba5</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-90" y="240" w="10" h="10" />
+    <onsuccess>5938f7b6-fb18-4fcc-ba7c-fa69f4f10913</onsuccess>
+  </stage>
+  <stage stageid="5b40a168-27da-4b41-853f-799018a1fd79" name="Loop Start1" type="LoopStart">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="30" />
+    <onsuccess>4ad9f3a0-c404-428b-a745-1174e4242d0b</onsuccess>
+    <groupid>28be800f-3e7a-4b6e-a58e-cf9a190eacf4</groupid>
+    <looptype>ForEach</looptype>
+    <loopdata>Dummy Serached Collection Bing</loopdata>
+  </stage>
+  <stage stageid="2c54c36c-e5dd-40b1-978b-f4ea5bf65990" name="Loop End1" type="LoopEnd">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="420" />
+    <onsuccess>3c947ad7-85ef-4b19-b5d3-1d49d596407a</onsuccess>
+    <groupid>28be800f-3e7a-4b6e-a58e-cf9a190eacf4</groupid>
+  </stage>
+  <stage stageid="4ad9f3a0-c404-428b-a745-1174e4242d0b" name="Collections::Add Row" type="Action">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="75" />
+    <inputs>
+      <input type="text" name="Collection Name" friendlyname="Collection Name" narrative="The name of the collection to act upon" expr="&quot;Searched Collection Bing&quot;" />
+    </inputs>
+    <onsuccess>d77e9024-b912-4ac3-a212-90ea816a60cf</onsuccess>
+    <resource object="Blueprism.AutomateProcessCore.clsCollectionActions" action="Add Row" />
+  </stage>
+  <stage stageid="5f27ead1-31c8-422c-b533-4d2a8d0567e6" name="Calc1" type="Calculation">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="-15" />
+    <onsuccess>5b40a168-27da-4b41-853f-799018a1fd79</onsuccess>
+    <calculation expression="1" stage="counter" />
+  </stage>
+  <stage stageid="d77e9024-b912-4ac3-a212-90ea816a60cf" name="Choice2" type="ChoiceStart">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-435" y="120" />
+    <groupid>45268e75-53d2-40b4-905e-50a2a3cd45a3</groupid>
+    <choices>
+      <choice expression="[counter]=1">
+        <name>counter =1</name>
+        <distance>30</distance>
+        <ontrue>1abb924a-9928-4775-9bcd-d7ca54fe4d1e</ontrue>
+      </choice>
+      <choice expression="[counter]=2">
+        <name>counter =2</name>
+        <distance>90</distance>
+        <ontrue>77047bd7-eea2-4f6c-a53c-947c30c23c26</ontrue>
+      </choice>
+      <choice expression="[counter]=3">
+        <name>counter =3</name>
+        <distance>150</distance>
+        <ontrue>9b9a475c-1e82-4758-b383-88c4142ffbee</ontrue>
+      </choice>
+    </choices>
+  </stage>
+  <stage stageid="6cbd78a2-e897-4040-98c9-ea490bb309b7" name="Otherwise2" type="ChoiceEnd">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-435" y="300" />
+    <onsuccess>8cdc2d6d-2a0a-4804-a02d-8b30bde63174</onsuccess>
+    <groupid>45268e75-53d2-40b4-905e-50a2a3cd45a3</groupid>
+  </stage>
+  <stage stageid="8cdc2d6d-2a0a-4804-a02d-8b30bde63174" name="counter++" type="Calculation">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="360" />
+    <onsuccess>2c54c36c-e5dd-40b1-978b-f4ea5bf65990</onsuccess>
+    <calculation expression="[counter]+1" stage="counter" />
+  </stage>
+  <stage stageid="1abb924a-9928-4775-9bcd-d7ca54fe4d1e" name="Multi1" type="MultipleCalculation">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-315" y="150" />
+    <onsuccess>c142b19a-a60b-46fb-b3b2-8d09774fda21</onsuccess>
+    <steps>
+      <calculation expression="[Bing Result 1]" stage="Serached Collection Bing.Tittle" />
+      <calculation expression="[Bing Sub Result 1]" stage="Serached Collection Bing.Sub Tittle" />
+    </steps>
+  </stage>
+  <stage stageid="c142b19a-a60b-46fb-b3b2-8d09774fda21" name="Anchor6" type="Anchor">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-135" y="150" w="10" h="10" />
+    <onsuccess>56f9cb62-47fc-4f8f-81dd-84421211d5aa</onsuccess>
+  </stage>
+  <stage stageid="6f609168-0859-4597-8be4-e5d3f158cd3e" name="Anchor7" type="Anchor">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-135" y="360" w="10" h="10" />
+    <onsuccess>8cdc2d6d-2a0a-4804-a02d-8b30bde63174</onsuccess>
+  </stage>
+  <stage stageid="56f9cb62-47fc-4f8f-81dd-84421211d5aa" name="Anchor9" type="Anchor">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-135" y="210" w="10" h="10" />
+    <onsuccess>b1abe19e-ff83-4db4-937b-7d222c1f05ac</onsuccess>
+  </stage>
+  <stage stageid="b1abe19e-ff83-4db4-937b-7d222c1f05ac" name="Anchor10" type="Anchor">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-135" y="270" w="10" h="10" />
+    <onsuccess>6f609168-0859-4597-8be4-e5d3f158cd3e</onsuccess>
+  </stage>
+  <stage stageid="fed5efc9-0b1a-43ee-acd3-db7b269cd637" name="Loop Start1" type="LoopStart">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="30" />
+    <onsuccess>0c699362-5b26-4f5b-a8de-315b0a7e52aa</onsuccess>
+    <groupid>d30a2521-e6c1-4e34-9eb7-fb8169482d52</groupid>
+    <looptype>ForEach</looptype>
+    <loopdata>Dummy Collection</loopdata>
+  </stage>
+  <stage stageid="4ceca8cf-9691-4a21-ad42-11c16442dbc4" name="Loop End1" type="LoopEnd">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="420" />
+    <onsuccess>94d58960-debc-4f65-afa2-71513379bf58</onsuccess>
+    <groupid>d30a2521-e6c1-4e34-9eb7-fb8169482d52</groupid>
+  </stage>
+  <stage stageid="0c699362-5b26-4f5b-a8de-315b0a7e52aa" name="Collections::Add Row" type="Action">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="75" />
+    <inputs>
+      <input type="text" name="Collection Name" friendlyname="Collection Name" narrative="The name of the collection to act upon" expr="&quot;Searched Collection&quot;" />
+    </inputs>
+    <onsuccess>d7f3aa42-fc19-4966-a22b-4dbfbec508af</onsuccess>
+    <resource object="Blueprism.AutomateProcessCore.clsCollectionActions" action="Add Row" />
+  </stage>
+  <stage stageid="6547fc76-00d0-4f75-9999-49330b6f80e6" name="Calc1" type="Calculation">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="-15" />
+    <onsuccess>fed5efc9-0b1a-43ee-acd3-db7b269cd637</onsuccess>
+    <calculation expression="1" stage="counter" />
+  </stage>
+  <stage stageid="d7f3aa42-fc19-4966-a22b-4dbfbec508af" name="Choice2" type="ChoiceStart">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-495" y="120" />
+    <groupid>26383b2a-0d24-4296-860b-d89946a341c1</groupid>
+    <choices>
+      <choice expression="[counter]=1">
+        <name>counter =1</name>
+        <distance>30</distance>
+        <ontrue>26f01e67-22f2-489d-b6ee-462a693456f7</ontrue>
+      </choice>
+      <choice expression="[counter]=2">
+        <name>counter =2</name>
+        <distance>90</distance>
+        <ontrue>fc538400-2449-458f-a800-e373151033c2</ontrue>
+      </choice>
+      <choice expression="[counter]=3">
+        <name>counter =3</name>
+        <distance>150</distance>
+        <ontrue>329b40b3-684a-4ee7-9986-b9666d82ee10</ontrue>
+      </choice>
+    </choices>
+  </stage>
+  <stage stageid="3c28909d-4e1f-4a1e-8d49-d12f77d73154" name="Otherwise2" type="ChoiceEnd">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-495" y="300" />
+    <onsuccess>d23522fc-e8be-405b-a6ef-f2f2824999c5</onsuccess>
+    <groupid>26383b2a-0d24-4296-860b-d89946a341c1</groupid>
+  </stage>
+  <stage stageid="d23522fc-e8be-405b-a6ef-f2f2824999c5" name="counter++" type="Calculation">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-495" y="360" />
+    <onsuccess>4ceca8cf-9691-4a21-ad42-11c16442dbc4</onsuccess>
+    <calculation expression="[counter]+1" stage="counter" />
+  </stage>
+  <stage stageid="26f01e67-22f2-489d-b6ee-462a693456f7" name="Multi1" type="MultipleCalculation">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-375" y="150" />
+    <onsuccess>14adc13c-d421-4742-9f87-5414b9024e3b</onsuccess>
+    <steps>
+      <calculation expression="[googleSearchResult1]" stage="Searched Collection.Search Tittle" />
+      <calculation expression="[googleSearchSubResult1]" stage="Searched Collection.Search Sub Tittle" />
+    </steps>
+  </stage>
+  <stage stageid="14adc13c-d421-4742-9f87-5414b9024e3b" name="Anchor6" type="Anchor">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="150" w="10" h="10" />
+    <onsuccess>5050a4bf-2287-40eb-88f0-51c182f77284</onsuccess>
+  </stage>
+  <stage stageid="da143e61-0ced-4c91-96df-acff08b2041e" name="Anchor7" type="Anchor">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="360" w="10" h="10" />
+    <onsuccess>d23522fc-e8be-405b-a6ef-f2f2824999c5</onsuccess>
+  </stage>
+  <stage stageid="5050a4bf-2287-40eb-88f0-51c182f77284" name="Anchor9" type="Anchor">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="210" w="10" h="10" />
+    <onsuccess>fbd04cb5-4463-4bc7-a786-a9d5e0660b0f</onsuccess>
+  </stage>
+  <stage stageid="fbd04cb5-4463-4bc7-a786-a9d5e0660b0f" name="Anchor10" type="Anchor">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="270" w="10" h="10" />
+    <onsuccess>da143e61-0ced-4c91-96df-acff08b2041e</onsuccess>
+  </stage>
+  <stage stageid="6244bc98-e452-4f80-ad78-e88d9c94c0e9" name="Dummy Collection" type="Collection">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-690" y="-15" w="120" h="30" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="Search Tittle" type="text" />
+      <field name="Search Sub Tittle" type="text" />
+    </collectioninfo>
+    <initialvalue>
+      <row>
+        <field name="Search Tittle" type="text" value="" />
+        <field name="Search Sub Tittle" type="text" value="" />
+      </row>
+      <row>
+        <field name="Search Tittle" type="text" value="" />
+        <field name="Search Sub Tittle" type="text" value="" />
+      </row>
+      <row>
+        <field name="Search Tittle" type="text" value="" />
+        <field name="Search Sub Tittle" type="text" value="" />
+      </row>
+    </initialvalue>
+  </stage>
+  <stage stageid="fc538400-2449-458f-a800-e373151033c2" name="Multi1" type="MultipleCalculation">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-375" y="210" />
+    <onsuccess>5050a4bf-2287-40eb-88f0-51c182f77284</onsuccess>
+    <steps>
+      <calculation expression="[googleSearchResult2]" stage="Searched Collection.Search Tittle" />
+      <calculation expression="[googleSearchSubResult2]" stage="Searched Collection.Search Sub Tittle" />
+    </steps>
+  </stage>
+  <stage stageid="329b40b3-684a-4ee7-9986-b9666d82ee10" name="Multi1" type="MultipleCalculation">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-375" y="270" />
+    <onsuccess>fbd04cb5-4463-4bc7-a786-a9d5e0660b0f</onsuccess>
+    <steps>
+      <calculation expression="[googleSearchResult3]" stage="Searched Collection.Search Tittle" />
+      <calculation expression="[googleSearchSubResult3]" stage="Searched Collection.Search Sub Tittle" />
+    </steps>
+  </stage>
+  <stage stageid="16a417c2-38f9-4da6-9b2b-ce0080d1f0fc" name="counter" type="Data">
+    <subsheetid>6dc938cc-ff33-48b1-9161-7ba131bfde82</subsheetid>
+    <display x="-720" y="45" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="942fec1f-5afb-43ce-b0c8-15463c6db54f" name="counter" type="Data">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-660" y="0" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="e218ded8-d5e6-4333-a381-329c6bedeb75" name="Dummy Serached Collection Bing" type="Collection">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <display x="-585" y="0" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="Tittle" type="text" />
+      <field name="Sub Tittle" type="text" />
+    </collectioninfo>
+    <initialvalue>
+      <row>
+        <field name="Tittle" type="text" value="" />
+        <field name="Sub Tittle" type="text" value="" />
+      </row>
+      <row>
+        <field name="Tittle" type="text" value="" />
+        <field name="Sub Tittle" type="text" value="" />
+      </row>
+      <row>
+        <field name="Tittle" type="text" value="" />
+        <field name="Sub Tittle" type="text" value="" />
+      </row>
+    </initialvalue>
+  </stage>
+  <stage stageid="77047bd7-eea2-4f6c-a53c-947c30c23c26" name="Multi1" type="MultipleCalculation">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-315" y="210" />
+    <onsuccess>56f9cb62-47fc-4f8f-81dd-84421211d5aa</onsuccess>
+    <steps>
+      <calculation expression="[Bing Result 2]" stage="Serached Collection Bing.Tittle" />
+      <calculation expression="[Bing Sub Result 2]" stage="Serached Collection Bing.Sub Tittle" />
+    </steps>
+  </stage>
+  <stage stageid="9b9a475c-1e82-4758-b383-88c4142ffbee" name="Multi1" type="MultipleCalculation">
+    <subsheetid>f35ab599-336e-4dcf-ba2d-c83a0f980c22</subsheetid>
+    <loginhibit onsuccess="true" />
+    <display x="-315" y="270" />
+    <onsuccess>b1abe19e-ff83-4db4-937b-7d222c1f05ac</onsuccess>
+    <steps>
+      <calculation expression="[Bing Result 3]" stage="Serached Collection Bing.Tittle" />
+      <calculation expression="[Bing Sub Result 3]" stage="Serached Collection Bing.Sub Tittle" />
+    </steps>
+  </stage>
+</process>
