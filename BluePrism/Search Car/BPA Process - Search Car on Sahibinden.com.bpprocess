@@ -1,0 +1,663 @@
+﻿<process name="Search Car on Sahibinden.com" version="1.0" bpversion="7.1.1.65484" narrative="" byrefcollection="true" preferredid="eb8af2b5-077f-4cc2-b6d9-67cee3d565a2">
+  <view>
+    <camerax>15</camerax>
+    <cameray>1425</cameray>
+    <zoom version="2">1.25</zoom>
+  </view>
+  <preconditions />
+  <endpoint narrative="" />
+  <stage stageid="3cdc3154-488b-4a4b-9564-7af9d74dc08f" name="Start" type="Start">
+    <display x="-195" y="-420" w="90" h="30" />
+    <onsuccess>512b43bb-c64e-4bec-9b87-80b0d566585e</onsuccess>
+  </stage>
+  <stage stageid="ae71fb3a-d19c-4197-861d-14b7c00eea31" name="End" type="End">
+    <display x="15" y="1635" />
+  </stage>
+  <stage stageid="b65a0a8e-1b12-4457-9cd8-aee1c9a01cd2" name="Stage1" type="ProcessInfo">
+    <display x="-630" y="-270" w="150" h="90" />
+  </stage>
+  <stage stageid="512b43bb-c64e-4bec-9b87-80b0d566585e" name="MS Outlook Email VBO::Get Received Items (Basic)" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="-360" w="120" h="30" />
+    <inputs>
+      <input type="text" name="Sender Name" friendlyname="Sender Name" narrative="Optional. The From display name, which might be a name (eg John Smith) or email address (eg admin@client.com). Asterisk wildcard permitted, eg *John Smith* for any mail where the text 'John Smith' appears in the From field." expr="" />
+      <input type="text" name="Sender Email" friendlyname="Sender Email" narrative="Optional. The sender email address." expr="" />
+      <input type="datetime" name="Received Earliest" friendlyname="Received Earliest" narrative="Optional. The earliest date to search from." expr="" />
+      <input type="datetime" name="Received Latest" friendlyname="Received Latest" narrative="Optional. The latest date to search to." expr="" />
+      <input type="text" name="Subject" friendlyname="Subject" narrative="Optional. Asterisk wildcard permitted, eg *Project Update for 'Project Update', 'RE: Project Update' etc." expr="" />
+      <input type="text" name="Message" friendlyname="Message" narrative="Optional. Asterisk wildcard permitted, eg *Blue Prism*" expr="" />
+      <input type="flag" name="Include Read" friendlyname="Include Read" narrative="Optional, default True" expr="False" />
+      <input type="flag" name="Include Unread" friendlyname="Include Unread" narrative="Optional, default True" expr="True" />
+      <input type="text" name="Sub Folder" friendlyname="Sub Folder" narrative="Optional. Any alphanumeric value valid. The Subfolder in the Inbox, eg. Subfolder A needs to be declared as &quot;Subfolder A&quot;. A Nested Subfolder eg. Subfolder B in Subfolder A, needs to be declared as &quot;Subfolder A\Subfolder B&quot;." expr="" />
+      <input type="text" name="Account Display Name" friendlyname="Account Display Name" narrative="Optional. DisplayName of the email account. Default account is used if omitted." expr="&quot;devletseverozgur@hotmail.com&quot;" />
+      <input type="text" name="Shared Mailbox" friendlyname="Shared Mailbox" narrative="Optional. Share Mailbox name or email address. Attempt to call Shared Mailbox is only initiated when a vaue is supplied." expr="" />
+    </inputs>
+    <outputs>
+      <output type="collection" name="Items" friendlyname="Items" narrative="Details of items matching the filter" stage="mailCollections" />
+      <output type="number" name="Item Count" friendlyname="Item Count" narrative="Number of items matching the filter" stage="mailCount" />
+    </outputs>
+    <onsuccess>6e488188-8040-4a6b-9e22-51e41ca22704</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Get Received Items (Basic)" />
+  </stage>
+  <stage stageid="d2d06950-2ecd-429e-b2e4-184a2ab42a16" name="mailCount" type="Data">
+    <display x="45" y="-360" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="a279e0ce-0217-426a-b1d0-d23a31b11694" name="mailCollections" type="Collection">
+    <display x="-45" y="-360" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="EntryID" type="text" description="The mail ID. NB this is different from the Mapiex ID." />
+      <field name="To" type="text" description="The display name of the recipient(s)" />
+      <field name="CC" type="text" description="The display name of the copied recipient(s)" />
+      <field name="Subject" type="text" description="The mail subject line" />
+      <field name="Body" type="text" description="The mail message" />
+      <field name="Attachments" type="text" description="The names of the attachements as a CSV string" />
+      <field name="ReceivedOn" type="datetime" description="The date an incoming mail was received" />
+      <field name="SentOn" type="datetime" description="The date an outgoing mail was sent" />
+      <field name="SenderName" type="text" description="The display name of the sender" />
+      <field name="SenderEmailAddress" type="text" description="The email of the sender" />
+      <field name="Unread" type="flag" description="True if an incoming mail has not been read, otherwise False" />
+      <field name="Sensitivity" type="number" description="Sensitivity of an email, from 0 to 3" />
+      <field name="Importance" type="number" description="Importance of an email, from 0 to 2" />
+      <field name="Flag" type="text" description="Flagged status of an email" />
+      <field name="IsHTML" type="flag" description="True if an email is in HTML" />
+    </collectioninfo>
+  </stage>
+  <stage stageid="0999fc4b-b503-45e2-8ff6-20ba83fe66c3" name="Save Mail Attachment" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="0" />
+    <inputs>
+      <input type="text" name="Entry ID" friendlyname="Entry ID" narrative="Mandatory. An ID obtained from one of the Get Item actions in this object. NB not the same as a Mapiex ID." expr="[mailCollections.EntryID]" />
+      <input type="text" name="Folder Path" friendlyname="Folder Path" narrative="Mandatory. The destination folder path for the attachments to be stored. Example &quot;C:\Temp&quot;." expr="[mailAttachFolderPath]" />
+    </inputs>
+    <onsuccess>7b440a4f-d1a2-4f10-bcca-8467fda08e97</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Save Attachments" />
+  </stage>
+  <stage stageid="b567926c-fe65-4947-8f9b-1e4a997a5951" name="mailAttachmentPath" type="Data">
+    <loginhibit onsuccess="true" />
+    <narrative>mail attachment folder path</narrative>
+    <display x="-645" y="-180" w="120" h="30" />
+    <datatype>text</datatype>
+    <initialvalue xml:space="preserve">C:\Users\devle\Documents\GitHub\RPA\BluePrism\Search Car</initialvalue>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="36d9366f-4c64-407f-b09d-135662ef8f75" name="Create Sender Mail Directory" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="-60" w="120" h="30" />
+    <inputs>
+      <input type="text" name="Directory Path" friendlyname="Directory Path" narrative="The path in which to create the directory" expr="[mailAttachFolderPath]" />
+      <input type="flag" name="Error If Already Exists" friendlyname="Error If Already Exists" narrative="True to generate an error if the directory already exists" expr="False" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" narrative="True if successful" stage="" />
+      <output type="text" name="Message" friendlyname="Message" narrative="An error message if unsuccessful" stage="" />
+    </outputs>
+    <onsuccess>0999fc4b-b503-45e2-8ff6-20ba83fe66c3</onsuccess>
+    <resource object="Utility - File Management" action="Create Directory" />
+  </stage>
+  <stage stageid="1c11fa2f-82ca-4b74-9701-17dfa1f2667a" name="Format Folder Name with Today" type="Calculation">
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="-120" w="150" h="30" />
+    <onsuccess>36d9366f-4c64-407f-b09d-135662ef8f75</onsuccess>
+    <calculation expression="[mailAttachmentPath]&amp;&quot;\&quot;&amp;FormatDate(Today(),&quot;dd.MM.yyyy&quot;)&amp;&quot;\&quot;&amp;[mailCollections.SenderEmailAddress]" stage="mailAttachFolderPath" />
+  </stage>
+  <stage stageid="2a1ebf3b-8946-4ec8-ab5d-b5938cadbdf6" name="mailAttachFolderPath" type="Data">
+    <display x="0" y="-120" w="150" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="b0baeb02-8042-4fd7-8683-913f1e5e7896" name="Create Archive Folder" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="-240" />
+    <inputs>
+      <input type="text" name="Directory Path" friendlyname="Directory Path" narrative="The path in which to create the directory" expr="[mailAttachmentPath]&amp;&quot;\&quot;&amp;&quot;Archive&quot;" />
+      <input type="flag" name="Error If Already Exists" friendlyname="Error If Already Exists" narrative="True to generate an error if the directory already exists" expr="False" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" narrative="True if successful" stage="" />
+      <output type="text" name="Message" friendlyname="Message" narrative="An error message if unsuccessful" stage="" />
+    </outputs>
+    <onsuccess>85b0ff3d-b662-4ebc-a1ff-95f6bf9f78c6</onsuccess>
+    <resource object="Utility - File Management" action="Create Directory" />
+  </stage>
+  <stage stageid="85b0ff3d-b662-4ebc-a1ff-95f6bf9f78c6" name="Mail Loop" type="LoopStart">
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="-180" w="270" h="30" />
+    <onsuccess>1c11fa2f-82ca-4b74-9701-17dfa1f2667a</onsuccess>
+    <groupid>afb064cf-e4c3-4edc-bc1c-a0d9bcb6d5fc</groupid>
+    <looptype>ForEach</looptype>
+    <loopdata>mailCollections</loopdata>
+  </stage>
+  <stage stageid="ba1b12f4-cf1f-4c32-ac80-af25cf9379bc" name="Mail Loop" type="LoopEnd">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="1485" w="240" h="30" />
+    <onsuccess>ae71fb3a-d19c-4197-861d-14b7c00eea31</onsuccess>
+    <groupid>afb064cf-e4c3-4edc-bc1c-a0d9bcb6d5fc</groupid>
+  </stage>
+  <stage stageid="105d1529-d0e8-4a6c-bb69-9ccbc462d220" name="handle" type="Data">
+    <display x="150" y="120" />
+    <datatype>number</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="7b440a4f-d1a2-4f10-bcca-8467fda08e97" name="Utility - File Management::Get Files" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-195" y="60" w="90" h="30" />
+    <inputs>
+      <input type="text" name="Folder" friendlyname="Folder" narrative="The folder in which to look for files" expr="[mailAttachFolderPath]" />
+      <input type="text" name="Patterns CSV" friendlyname="Patterns CSV" narrative="The comma seperated list of wildcard patterns" expr="&quot;*.xlsx&quot;" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" narrative="True if successful" stage="" />
+      <output type="text" name="Message" friendlyname="Message" narrative="A message if unsuccessful" stage="" />
+      <output type="collection" name="Files" friendlyname="Files" narrative="The collection of files found" stage="folderFiles" />
+    </outputs>
+    <onsuccess>db064d87-d30e-4c92-b53f-299276bc134e</onsuccess>
+    <breakpoint type="0">
+      <condition>
+      </condition>
+    </breakpoint>
+    <resource object="Utility - File Management" action="Get Files" />
+  </stage>
+  <stage stageid="1de7c0b2-c2a6-4cc3-8c5e-acfdd6afab51" name="folderFiles" type="Collection">
+    <display x="-315" y="60" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="db064d87-d30e-4c92-b53f-299276bc134e" name="File Loop" type="LoopStart">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="60" w="180" h="30" />
+    <onsuccess>f0131b7c-8f9c-4ae3-8d0e-49c477f2ba38</onsuccess>
+    <groupid>78190f79-2584-4729-a1dc-0a7f0c09bdc2</groupid>
+    <looptype>ForEach</looptype>
+    <loopdata>folderFiles</loopdata>
+  </stage>
+  <stage stageid="6a45a271-f79a-4aef-97fb-72250c735211" name="File Loop" type="LoopEnd">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="1425" w="150" h="30" />
+    <onsuccess>ba1b12f4-cf1f-4c32-ac80-af25cf9379bc</onsuccess>
+    <groupid>78190f79-2584-4729-a1dc-0a7f0c09bdc2</groupid>
+  </stage>
+  <stage stageid="5573a975-8441-44f2-9cff-8404b3a420d1" name="mailAttachCollection" type="Collection">
+    <display x="180" y="240" w="120" h="30" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="5d59e28d-adcd-4013-8601-287477199496" name="Workbook Name" type="Data">
+    <display x="165" y="180" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="810a7f9f-d3a7-4168-ac95-2451a53ff711" name="Inputs" type="Block">
+    <loginhibit onsuccess="true" />
+    <display x="-720" y="-210" w="180" h="90" />
+    <font family="Segoe UI" size="10" style="Regular" color="7FB2E5" />
+  </stage>
+  <stage stageid="423ba1e5-0d90-4f66-ae54-0a9679a93179" name="Result Table" type="Collection">
+    <display x="225" y="780" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="5a016424-0eee-4c68-93cf-61f8ef7dc8b3" name="Mail Attachment Clooctions Loop" type="LoopStart">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="300" w="210" h="30" />
+    <onsuccess>93ebb16e-f4c1-4cb9-ad22-7e8fe83a2f70</onsuccess>
+    <groupid>2da5d527-8a43-4523-87d1-ae0ccec01446</groupid>
+    <looptype>ForEach</looptype>
+    <loopdata>mailAttachCollection</loopdata>
+  </stage>
+  <stage stageid="4109892c-7137-44f7-b083-4b0e58aa9c6b" name="Mail Attachment Clooctions Loop" type="LoopEnd">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="1065" w="120" h="30" />
+    <onsuccess>d55ba356-7c82-45ad-8f55-b505289d3e0f</onsuccess>
+    <groupid>2da5d527-8a43-4523-87d1-ae0ccec01446</groupid>
+  </stage>
+  <stage stageid="f0131b7c-8f9c-4ae3-8d0e-49c477f2ba38" name="MS Excel VBO::Create Instance" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="120" w="90" h="30" />
+    <inputs>
+      <input type="flag" name="Enable Events" friendlyname="Enable Events" narrative="Flag to indicate that events should be enabled / disabled on the attached instance - defaulted to True" expr="" />
+    </inputs>
+    <outputs>
+      <output type="number" name="handle" friendlyname="handle" narrative="An integer which can be used to identify the created instance in subsequent actions" stage="handle" />
+    </outputs>
+    <onsuccess>d7efef1c-6b09-424b-a8f6-7835aa55aa7d</onsuccess>
+    <resource object="MS Excel VBO" action="Create Instance" />
+  </stage>
+  <stage stageid="7ad31219-8742-42e8-a5da-fc8b06e721b5" name="MS Excel VBO::Get Worksheet As Collection" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="240" w="120" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the worksheet which should be retrieved resides. The default of zero indicates the currently active instance." expr="[handle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook which contains the sheet required. The default empty text indicates the currently active workbook on the specified instance." expr="[Workbook Name]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" narrative="The name of the worksheet within the specified workbook which should be written to a collection. The default empty text indicates the currently active worksheet within the specified workbook." expr="" />
+      <input type="text" name="Fetch Data With Method" friendlyname="Fetch Data With Method" narrative="The method used to fetch data from cells in the worksheet. Options include Text, Value, and Value2. The default indicates Value will be used." expr="" />
+    </inputs>
+    <outputs>
+      <output type="collection" name="Data" friendlyname="Data" narrative="The collection containing the data from the specified worksheet - the column IDs will be gleaned from the first row on the sheet being retrieved." stage="mailAttachCollection" />
+    </outputs>
+    <onsuccess>5a016424-0eee-4c68-93cf-61f8ef7dc8b3</onsuccess>
+    <resource object="MS Excel VBO" action="Get Worksheet As Collection" />
+  </stage>
+  <stage stageid="d7efef1c-6b09-424b-a8f6-7835aa55aa7d" name="MS Excel VBO::Open Workbook" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="180" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the required workbook should be opened. The default of zero indicates the currently active instance." expr="[handle]" />
+      <input type="text" name="File name" friendlyname="File name" narrative="The path and name of the file which should be opened." expr="[folderFiles.Path]" />
+    </inputs>
+    <outputs>
+      <output type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name used by Excel to identify the workbook - usually this is the file name (without the path)." stage="Workbook Name" />
+    </outputs>
+    <onsuccess>7ad31219-8742-42e8-a5da-fc8b06e721b5</onsuccess>
+    <resource object="MS Excel VBO" action="Open Workbook" />
+  </stage>
+  <stage stageid="93ebb16e-f4c1-4cb9-ad22-7e8fe83a2f70" name="Sahibinden Search::Launch" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="360" w="150" h="30" />
+    <onsuccess>742d8f81-48a7-4d95-bc20-5ac8b7d6982a</onsuccess>
+    <resource object="Sahibinden Search" action="Launch" />
+  </stage>
+  <stage stageid="742d8f81-48a7-4d95-bc20-5ac8b7d6982a" name="Sahibinden Search::Go Car Category" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="420" w="150" h="30" />
+    <onsuccess>cda4b8d1-4e81-48a4-a5aa-f05048c158a3</onsuccess>
+    <resource object="Sahibinden Search" action="Go Car Category" />
+  </stage>
+  <stage stageid="cda4b8d1-4e81-48a4-a5aa-f05048c158a3" name="Sahibinden Search::Go to Marka" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="480" w="150" h="30" />
+    <inputs>
+      <input type="text" name="Model" friendlyname="Model" expr="[mailAttachCollection.Marka]" />
+    </inputs>
+    <onsuccess>5149094c-1913-42cc-92ca-3d2363583af8</onsuccess>
+    <resource object="Sahibinden Search" action="Go to Marka" />
+  </stage>
+  <stage stageid="5149094c-1913-42cc-92ca-3d2363583af8" name="Sahibinden Search::Go to Model" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="540" w="150" h="30" />
+    <inputs>
+      <input type="text" name="Model" friendlyname="Model" expr="[mailAttachCollection.Model]" />
+    </inputs>
+    <onsuccess>3af58a55-13a2-4641-bef6-2f5da21784b9</onsuccess>
+    <resource object="Sahibinden Search" action="Go to Model" />
+  </stage>
+  <stage stageid="3af58a55-13a2-4641-bef6-2f5da21784b9" name="Sahibinden Search::Write Filter-Yılmin" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="600" w="150" h="30" />
+    <inputs>
+      <input type="text" name="Yilmin" friendlyname="Yilmin" expr="[mailAttachCollection.Yıl(min)]" />
+    </inputs>
+    <onsuccess>3714fbbc-03ce-4d25-bb98-ef6374246bf3</onsuccess>
+    <resource object="Sahibinden Search" action="Write Filter-Yılmin" />
+  </stage>
+  <stage stageid="3714fbbc-03ce-4d25-bb98-ef6374246bf3" name="Sahibinden Search::Write Filter-Km" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="660" w="150" h="30" />
+    <inputs>
+      <input type="text" name="Kmin" friendlyname="Kmin" expr="[mailAttachCollection.Km(min)]" />
+    </inputs>
+    <onsuccess>e0acaa82-a0ee-43ef-817b-cfccd7da3c20</onsuccess>
+    <resource object="Sahibinden Search" action="Write Filter-Km" />
+  </stage>
+  <stage stageid="3417011d-b140-45df-be3e-1b11bb6dee72" name="Sahibinden Search::Read Result" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="780" w="90" h="30" />
+    <outputs>
+      <output type="collection" name="Result Table" friendlyname="Result Table" stage="Result Table" />
+      <output type="text" name="No Search Result" friendlyname="No Search Result" stage="No Search Result" />
+    </outputs>
+    <onsuccess>60b488d8-08ef-43c2-896f-9d077975c2d9</onsuccess>
+    <resource object="Sahibinden Search" action="Read Result" />
+  </stage>
+  <stage stageid="60b488d8-08ef-43c2-896f-9d077975c2d9" name="Sahibinden Search::Close " type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="840" />
+    <onsuccess>4b764554-4358-4e87-86b3-01e37374d1a2</onsuccess>
+    <resource object="Sahibinden Search" action="Close " />
+  </stage>
+  <stage stageid="e0acaa82-a0ee-43ef-817b-cfccd7da3c20" name="Sahibinden Search::Search Button" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="720" w="150" h="30" />
+    <onsuccess>3417011d-b140-45df-be3e-1b11bb6dee72</onsuccess>
+    <resource object="Sahibinden Search" action="Search Button" />
+  </stage>
+  <stage stageid="14407b52-dca2-44f9-8db2-fd5bb12ed533" name="Exception1" type="Exception">
+    <display x="-390" y="0" />
+    <exception localized="yes" type="System Exception" detail="&quot;Mail ek dosya kaydetme hatası&quot;" />
+  </stage>
+  <stage stageid="1f1f9378-470b-4820-8bb3-0fed9902987d" name="Block1" type="Block">
+    <loginhibit onsuccess="true" />
+    <display x="-450" y="-30" w="345" h="60" />
+    <font family="Segoe UI" size="10" style="Regular" color="7FB2E5" />
+  </stage>
+  <stage stageid="6e488188-8040-4a6b-9e22-51e41ca22704" name="mail count &gt; 0 ?" type="Decision">
+    <display x="-195" y="-300" w="90" h="30" />
+    <decision expression="[mailCount] &gt; 0" />
+    <ontrue>b0baeb02-8042-4fd7-8683-913f1e5e7896</ontrue>
+    <onfalse>eef26352-c847-4612-a707-d89ab7e529b2</onfalse>
+  </stage>
+  <stage stageid="eef26352-c847-4612-a707-d89ab7e529b2" name="Exception2" type="Exception">
+    <display x="-390" y="-300" />
+    <exception localized="yes" type="System Exception" detail="&quot;Yeni mail yok&quot;" />
+  </stage>
+  <stage stageid="3ac4c463-088b-4e84-b0f8-f2f78cba1dc5" name="Block2" type="Block">
+    <loginhibit onsuccess="true" />
+    <display x="-450" y="-330" w="345" h="60" />
+    <font family="Segoe UI" size="10" style="Regular" color="7FB2E5" />
+  </stage>
+  <stage stageid="c34f1ec1-25a6-4411-bc2d-ff083a17ef9e" name="MS Excel VBO::Write Collection" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-405" y="945" w="120" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the specified collection should be written. The default of zero indicates the currently active instance." expr="[handle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook within which the data should be written. The default empty value indicates the current workbook within the specified instance." expr="[Workbook Name]" />
+      <input type="collection" name="Collection" friendlyname="Collection" narrative="The collection containing the data which should be written to the worksheet." expr="[Arama Sonucu Bulunamadı]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" narrative="The name of the worksheet on which the given data should be written. The default empty value indicates the current sheet within the specified workbook." expr="[sheetName]" />
+      <input type="text" name="Cell Reference" friendlyname="Cell Reference" narrative="The reference at which the collection should be written." expr="&quot;A1&quot;" />
+      <input type="flag" name="Include Column Names" friendlyname="Include Column Names" narrative="True to indicate that the column names from the collection should be written out as the first row; False to ignore the column names and just write out the data." expr="" />
+    </inputs>
+    <onsuccess>1a324bfc-b8ec-4a79-afc5-2cb2f4c0eaa4</onsuccess>
+    <resource object="MS Excel VBO" action="Write Collection" />
+  </stage>
+  <stage stageid="4b764554-4358-4e87-86b3-01e37374d1a2" name="Result Check !" type="ChoiceStart">
+    <display x="15" y="915" w="90" h="30" />
+    <groupid>7453b78d-a4a8-4fb3-814c-be8d6c8600da</groupid>
+    <choices>
+      <choice expression="[No Search Result]=True">
+        <name>No Result</name>
+        <distance>30</distance>
+        <ontrue>8cfdd131-fee0-40e0-ae57-701cc01c1189</ontrue>
+      </choice>
+    </choices>
+  </stage>
+  <stage stageid="14bbd37e-965e-4551-a095-a0e3105839ea" name="Otherwise1" type="ChoiceEnd">
+    <display x="15" y="1005" />
+    <onsuccess>f15d98db-a327-4c15-aea5-004455ba63c7</onsuccess>
+    <groupid>7453b78d-a4a8-4fb3-814c-be8d6c8600da</groupid>
+  </stage>
+  <stage stageid="fc88375f-701b-4ab2-a879-54b2313a4c9c" name="No Search Result" type="Data">
+    <display x="120" y="780" w="90" h="30" />
+    <datatype>flag</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="48ea005c-ad20-4575-a412-d300700ccbf7" name="Arama Sonucu Bulunamadı" type="Collection">
+    <display x="-255" y="885" w="90" h="30" />
+    <datatype>collection</datatype>
+    <private />
+    <alwaysinit />
+    <collectioninfo>
+      <field name="Arama Sonucu" type="text" />
+    </collectioninfo>
+    <initialvalue>
+      <row>
+        <field name="Arama Sonucu" type="text" value="Arama Sonucu Bulunamadı" />
+      </row>
+    </initialvalue>
+  </stage>
+  <stage stageid="f918f4ed-59f9-41c9-8017-6d42a58fa61c" name="MS Excel VBO::Write Collection" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-405" y="1005" w="120" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the specified collection should be written. The default of zero indicates the currently active instance." expr="[handle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook within which the data should be written. The default empty value indicates the current workbook within the specified instance." expr="[Workbook Name]" />
+      <input type="collection" name="Collection" friendlyname="Collection" narrative="The collection containing the data which should be written to the worksheet." expr="[Result Table]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" narrative="The name of the worksheet on which the given data should be written. The default empty value indicates the current sheet within the specified workbook." expr="[sheetName]" />
+      <input type="text" name="Cell Reference" friendlyname="Cell Reference" narrative="The reference at which the collection should be written." expr="&quot;A1&quot;" />
+      <input type="flag" name="Include Column Names" friendlyname="Include Column Names" narrative="True to indicate that the column names from the collection should be written out as the first row; False to ignore the column names and just write out the data." expr="False" />
+    </inputs>
+    <onsuccess>861fe16c-9ac3-47d6-8f32-5e5e7aa4ed96</onsuccess>
+    <resource object="MS Excel VBO" action="Write Collection" />
+  </stage>
+  <stage stageid="861fe16c-9ac3-47d6-8f32-5e5e7aa4ed96" name="Anchor1" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-510" y="1005" w="10" h="10" />
+    <onsuccess>fda16fbe-93b6-4ac5-8823-10420160bb73</onsuccess>
+  </stage>
+  <stage stageid="fda16fbe-93b6-4ac5-8823-10420160bb73" name="Anchor2" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-510" y="1065" w="10" h="10" />
+    <onsuccess>4109892c-7137-44f7-b083-4b0e58aa9c6b</onsuccess>
+  </stage>
+  <stage stageid="1a324bfc-b8ec-4a79-afc5-2cb2f4c0eaa4" name="Anchor3" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-510" y="945" w="10" h="10" />
+    <onsuccess>861fe16c-9ac3-47d6-8f32-5e5e7aa4ed96</onsuccess>
+  </stage>
+  <stage stageid="9d276d5a-0eeb-48cf-8aaf-685db4846377" name="MS Excel VBO::Create Worksheet" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-255" y="945" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the worksheet should be created. The default of zero indicates the currently active instance." expr="[handle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook in which the sheet should be created - The default empty value indicates the currently active workbook on the specified instance." expr="[Workbook Name]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" narrative="The name of the sheet which should be activated. The default empty text value indicates that the currently active sheet should be, er, activated, making this a no-op." expr="[mailAttachCollection.Marka]&amp;&quot;-&quot;&amp;[mailAttachCollection.Model]" />
+    </inputs>
+    <onsuccess>c34f1ec1-25a6-4411-bc2d-ff083a17ef9e</onsuccess>
+    <resource object="MS Excel VBO" action="Create Worksheet" />
+  </stage>
+  <stage stageid="8cfdd131-fee0-40e0-ae57-701cc01c1189" name="Set Sheetname" type="Calculation">
+    <loginhibit onsuccess="true" />
+    <display x="-135" y="945" />
+    <onsuccess>9d276d5a-0eeb-48cf-8aaf-685db4846377</onsuccess>
+    <calculation expression="[mailAttachCollection.Marka]&amp;&quot;-&quot;&amp;[mailAttachCollection.Model]&#xA;" stage="sheetName" />
+  </stage>
+  <stage stageid="4d3ca6af-5dcb-4c19-8517-bcf3520f9f65" name="sheetName" type="Data">
+    <display x="-135" y="885" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="f15d98db-a327-4c15-aea5-004455ba63c7" name="Set Sheetname" type="Calculation">
+    <loginhibit onsuccess="true" />
+    <display x="-135" y="1005" />
+    <onsuccess>33d765bf-1067-42a5-9ade-167ca83f5e3c</onsuccess>
+    <calculation expression="[mailAttachCollection.Marka]&amp;&quot;-&quot;&amp;[mailAttachCollection.Model]&#xA;" stage="sheetName" />
+  </stage>
+  <stage stageid="33d765bf-1067-42a5-9ade-167ca83f5e3c" name="MS Excel VBO::Create Worksheet" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-255" y="1005" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the worksheet should be created. The default of zero indicates the currently active instance." expr="[handle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook in which the sheet should be created - The default empty value indicates the currently active workbook on the specified instance." expr="[Workbook Name]" />
+      <input type="text" name="Worksheet Name" friendlyname="Worksheet Name" narrative="The name of the sheet which should be activated. The default empty text value indicates that the currently active sheet should be, er, activated, making this a no-op." expr="[mailAttachCollection.Marka]&amp;&quot;-&quot;&amp;[mailAttachCollection.Model]" />
+    </inputs>
+    <onsuccess>f918f4ed-59f9-41c9-8017-6d42a58fa61c</onsuccess>
+    <resource object="MS Excel VBO" action="Create Worksheet" />
+  </stage>
+  <stage stageid="a4590305-3d16-479f-9826-bd1b7487d3b8" name="Close  Workbook" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="1305" w="90" h="30" />
+    <inputs>
+      <input type="number" name="handle" friendlyname="handle" narrative="The integer handle identifying the instance on which the workbook which should be closed resides. The default of zero indicates the currently active instance." expr="[handle]" />
+      <input type="text" name="Workbook Name" friendlyname="Workbook Name" narrative="The name of the workbook which should be closed." expr="[Workbook Name]" />
+      <input type="flag" name="Save Data" friendlyname="Save Data" narrative="True to save the data before closing the workbook; The default of False will discard any changes before closing the workbook." expr="" />
+    </inputs>
+    <onsuccess>4a8e3d50-0f2b-420c-8d0e-1a1cdf0724d7</onsuccess>
+    <resource object="MS Excel VBO" action="Close Workbook" />
+  </stage>
+  <stage stageid="7a8f299f-8911-495a-8d13-4d75df59a732" name="MS Outlook Email VBO::Send Email" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="1185" w="180" h="30" />
+    <inputs>
+      <input type="text" name="To" friendlyname="To" narrative="Mandatory. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;" expr="[mailCollections.SenderEmailAddress]" />
+      <input type="text" name="CC" friendlyname="CC" narrative="Optional. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;. Default blank" expr="" />
+      <input type="text" name="BCC" friendlyname="BCC" narrative="Optional. Any alphanumeric value allowed. Single Recipient = &quot;Name1@emaill.com&quot;; Multi Recipient = &quot;Name1@emaill.com; Name2@email.com&quot;. Default blank" expr="" />
+      <input type="text" name="Subject" friendlyname="Subject" narrative="Optional. Any alphanumeric value allowed." expr="" />
+      <input type="text" name="Message" friendlyname="Message" narrative="Optional, HTML or plain text" expr="" />
+      <input type="text" name="Attachments" friendlyname="Attachments" narrative="Optional, Semicolon--separated file paths. Default blank." expr="[folderFiles.Path]" />
+      <input type="flag" name="IsHTML" friendlyname="IsHTML" narrative="Optional. True or False, default to True" expr="" />
+      <input type="number" name="Sensitivity" friendlyname="Sensitivity" narrative="Optional. An integer between 0 and 3, default to 0." expr="" />
+      <input type="number" name="Importance" friendlyname="Importance" narrative="Optional. An integer between 0 and 2 default to 1." expr="" />
+      <input type="text" name="Account Display Name" friendlyname="Account Display Name" narrative="Optional. DisplayName of the email account. Default account is used if omitted." expr="&quot;devletseverozgur@hotmail.com&quot;" />
+    </inputs>
+    <onsuccess>95822e82-88e2-4c4a-aef4-9c4639e537ba</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Send Email" />
+  </stage>
+  <stage stageid="95822e82-88e2-4c4a-aef4-9c4639e537ba" name="MS Outlook Email VBO::Mark Email As Read" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="1245" w="180" h="30" />
+    <inputs>
+      <input type="text" name="Entry ID" friendlyname="Entry ID" narrative="Mandatory. An ID obtained from one of the Get Item actions in this object. NB not the same as a Mapiex ID." expr="[mailCollections.EntryID]" />
+    </inputs>
+    <onsuccess>a4590305-3d16-479f-9826-bd1b7487d3b8</onsuccess>
+    <resource object="MS Outlook Email VBO" action="Mark Email As Read" />
+  </stage>
+  <stage stageid="d55ba356-7c82-45ad-8f55-b505289d3e0f" name="MS Excel VBO::Save Current Workbook" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="1125" w="180" h="30" />
+    <onsuccess>7a8f299f-8911-495a-8d13-4d75df59a732</onsuccess>
+    <resource object="MS Excel VBO" action="Save Current Workbook" />
+  </stage>
+  <stage stageid="038fbad8-336e-4a24-a806-19a506d80b39" name="Utility - File Management::Move File" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="1365" />
+    <inputs>
+      <input type="text" name="File Path" friendlyname="File Path" narrative="The full path to the file to move" expr="[folderFiles.Path]" />
+      <input type="text" name="Destination Path" friendlyname="Destination Path" narrative="The path to the folder to move the file to" expr="[archiveMovePath]&amp;&quot;\&quot;&amp;FormatDate(Today(),&quot;dd.MM.yyyy&quot;)&amp;&quot;-&quot;&amp;[folderFiles.Name]" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" narrative="True if successful" stage="" />
+      <output type="text" name="Message" friendlyname="Message" narrative="An error message if unsuccessful" stage="" />
+    </outputs>
+    <onsuccess>7a875ea0-cf1f-4212-ae33-09088ecaaccf</onsuccess>
+    <resource object="Utility - File Management" action="Move File" />
+  </stage>
+  <stage stageid="4a8e3d50-0f2b-420c-8d0e-1a1cdf0724d7" name="Format Folder Name with Today" type="Calculation">
+    <loginhibit onsuccess="true" />
+    <display x="15" y="1365" w="150" h="30" />
+    <onsuccess>fe5e7631-5d78-4f73-8282-67d24f44656d</onsuccess>
+    <calculation expression="[mailAttachmentPath]&amp;&quot;\&quot;&amp;&quot;Archive&quot;&amp;&quot;\&quot;&amp;FormatDate(Today(),&quot;dd.MM.yyyy&quot;)&amp;&quot;\&quot;&amp;[mailCollections.SenderEmailAddress]" stage="archiveMovePath" />
+  </stage>
+  <stage stageid="fe5e7631-5d78-4f73-8282-67d24f44656d" name="Utility - File Management::Create Directory" type="Action">
+    <loginhibit onsuccess="true" />
+    <display x="-240" y="1365" w="120" h="30" />
+    <inputs>
+      <input type="text" name="Directory Path" friendlyname="Directory Path" narrative="The path in which to create the directory" expr="[archiveMovePath]" />
+      <input type="flag" name="Error If Already Exists" friendlyname="Error If Already Exists" narrative="True to generate an error if the directory already exists" expr="False" />
+    </inputs>
+    <outputs>
+      <output type="flag" name="Success" friendlyname="Success" narrative="True if successful" stage="" />
+      <output type="text" name="Message" friendlyname="Message" narrative="An error message if unsuccessful" stage="" />
+    </outputs>
+    <onsuccess>038fbad8-336e-4a24-a806-19a506d80b39</onsuccess>
+    <resource object="Utility - File Management" action="Create Directory" />
+  </stage>
+  <stage stageid="f95e6802-05ac-4698-92a5-3edcd336c4a4" name="archiveMovePath" type="Data">
+    <display x="180" y="1365" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="7a875ea0-cf1f-4212-ae33-09088ecaaccf" name="Anchor5" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-435" y="1425" w="10" h="10" />
+    <onsuccess>6a45a271-f79a-4aef-97fb-72250c735211</onsuccess>
+  </stage>
+  <stage stageid="867c5bcc-e41c-4e6b-ad80-29bcf3b89e66" name="Resume1" type="Resume">
+    <loginhibit />
+    <display x="450" y="840" />
+    <onsuccess>66bd9f7b-4cad-43eb-8177-c855393a235c</onsuccess>
+  </stage>
+  <stage stageid="6c976f8a-cd68-4046-8fd7-06238ee5b7c5" name="Anchor6" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-75" y="885" w="10" h="10" />
+    <onsuccess>e84d1772-e517-458e-b8fe-59923296e0f4</onsuccess>
+  </stage>
+  <stage stageid="e84d1772-e517-458e-b8fe-59923296e0f4" name="Anchor7" type="Anchor">
+    <loginhibit onsuccess="true" />
+    <display x="-75" y="780" w="10" h="10" />
+    <onsuccess>3417011d-b140-45df-be3e-1b11bb6dee72</onsuccess>
+  </stage>
+  <stage stageid="d4574f90-ac70-4a32-990e-80c9e7603c4f" name="Counter++" type="Calculation">
+    <loginhibit onsuccess="true" />
+    <display x="345" y="885" />
+    <onsuccess>6c976f8a-cd68-4046-8fd7-06238ee5b7c5</onsuccess>
+    <calculation expression="[count]+1" stage="counterReadStage" />
+  </stage>
+  <stage stageid="cc33683a-35c1-4579-a716-9f6bcec32f0b" name="counterReadStage" type="Data">
+    <display x="540" y="780" w="90" h="30" />
+    <datatype>text</datatype>
+    <initialvalue />
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="a1dfc201-48a2-4fec-97a3-2f2f9934b78e" name="count" type="Data">
+    <loginhibit onsuccess="true" />
+    <display x="345" y="780" />
+    <datatype>number</datatype>
+    <initialvalue>0</initialvalue>
+    <private />
+    <alwaysinit />
+  </stage>
+  <stage stageid="eac02b8e-d0c3-4e78-92bd-732be8a25a94" name="Block3" type="Block">
+    <loginhibit onsuccess="true" />
+    <display x="-120" y="750" w="720" h="60" />
+    <font family="Segoe UI" size="10" style="Regular" color="7FB2E5" />
+  </stage>
+  <stage stageid="66bd9f7b-4cad-43eb-8177-c855393a235c" name="count = 1 ?" type="Decision">
+    <display x="345" y="840" />
+    <decision expression="[count]=1" />
+    <ontrue>a5b6e8f2-133c-4e3e-b9fa-87d0ac24f378</ontrue>
+    <onfalse>d4574f90-ac70-4a32-990e-80c9e7603c4f</onfalse>
+  </stage>
+  <stage stageid="a5b6e8f2-133c-4e3e-b9fa-87d0ac24f378" name="Exception3" type="Exception">
+    <display x="195" y="840" />
+    <exception localized="yes" type="System Exception" detail="&quot;Read Result Okuma Hatası&quot;" />
+  </stage>
+  <stage stageid="86b1fdcf-cffe-48d1-8bfb-46e6b28b8d42" name="Block4" type="Block">
+    <loginhibit onsuccess="true" />
+    <display x="-75" y="570" w="345" h="60" />
+    <font family="Segoe UI" size="10" style="Regular" color="7FB2E5" />
+  </stage>
+  <stage stageid="add4cd75-1f23-4a21-9a4d-8dbfcb5d3020" name="Resume2" type="Resume">
+    <loginhibit />
+    <display x="225" y="660" />
+    <onsuccess>3714fbbc-03ce-4d25-bb98-ef6374246bf3</onsuccess>
+  </stage>
+  <stage stageid="386fb997-0bd4-4b53-8b7f-e6ea8f5e404c" name="Block4" type="Block">
+    <loginhibit onsuccess="true" />
+    <display x="-240" y="645" w="345" h="45" />
+    <font family="Segoe UI" size="10" style="Regular" color="7FB2E5" />
+  </stage>
+  <stage stageid="1109acbe-cf82-4bcf-acc8-8c8fd0bccea9" name="Resume3" type="Resume">
+    <loginhibit />
+    <display x="-165" y="735" />
+    <onsuccess>e0acaa82-a0ee-43ef-817b-cfccd7da3c20</onsuccess>
+  </stage>
+  <stage stageid="427e0f79-acd8-4ea5-bdc7-57dff4322366" name="Recover1" type="Recover">
+    <loginhibit />
+    <display x="-165" y="660" />
+    <onsuccess>1109acbe-cf82-4bcf-acc8-8c8fd0bccea9</onsuccess>
+    <attempts>1</attempts>
+  </stage>
+  <stage stageid="21ba77f2-9804-4b9a-801e-d51eb0768292" name="Recover2" type="Recover">
+    <loginhibit />
+    <display x="225" y="600" />
+    <onsuccess>add4cd75-1f23-4a21-9a4d-8dbfcb5d3020</onsuccess>
+    <attempts>1</attempts>
+  </stage>
+  <stage stageid="4634c09b-8289-4dd7-8780-19e65eea3a41" name="Recover3" type="Recover">
+    <loginhibit />
+    <display x="450" y="780" />
+    <onsuccess>867c5bcc-e41c-4e6b-ad80-29bcf3b89e66</onsuccess>
+  </stage>
+</process>
